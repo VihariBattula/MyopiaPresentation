@@ -49,10 +49,10 @@
 
         .reveal h1 { font-size: 2.2em; line-height: 1.1; margin-bottom: 20px;}
         .reveal h2 { 
-            font-size: 1.6em; 
+            font-size: 1.5em; 
             border-bottom: 4px solid var(--theme-teal); 
-            padding-bottom: 15px; 
-            margin-bottom: 40px;
+            padding-bottom: 5px; 
+            margin-bottom: 15px;
             display: inline-block;
         }
         .reveal h3 { font-size: 1.3em; font-weight: 700; }
@@ -235,12 +235,72 @@
             line-height: 1;
         }
 
+
         /* Progress Bar top positioning */
         .reveal .progress {
             top: 0 !important;
             bottom: auto !important;
-            height: 6px !important;
+            height: 8px !important;
             z-index: 100 !important;
+        }
+        .reveal .progress span {
+            background-color: var(--theme-teal) !important;
+        }
+
+        
+        /* Interactive Flowchart Diagram */
+        .fc-node {
+            background: white;
+            border: 3px solid var(--theme-blue);
+            border-radius: 12px;
+            padding: 10px 15px;
+            cursor: pointer;
+            position: relative;
+            font-weight: 700;
+            font-size: 0.75em;
+            color: var(--theme-blue);
+            z-index: 2;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-family: inherit;
+        }
+        .fc-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.15);
+            border-color: var(--theme-teal);
+        }
+        .fc-node.node-blue-1 { background-color: #EFF6FF; border-color: #1E3A8A; }
+        .fc-node.node-teal-1 { background-color: #F0FDFA; border-color: #0D9488; }
+        .fc-node.node-blue-2 { background-color: #DBEAFE; border-color: #2563EB; }
+        .fc-node.node-green-1 { background-color: #ECFDF5; border-color: #059669; }
+
+        #info-display {
+            background: #F8FAFC;
+            border: 3px dashed var(--theme-teal);
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin: 10px auto 0;
+            text-align: left;
+            font-size: 0.75em;
+            min-height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #334155;
+            max-width: 85%;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .info-content {
+            display: none;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+        .info-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Mind Map Styling */
@@ -339,24 +399,60 @@
                 </aside>
             </section>
 
+            
+
+            
+
+            
+
+            <!-- Slide: Causes Combined -->
+            <section data-background-color="#FFFFFF">
+                <h2>Why our generation?</h2>
+                <div class="container" style="align-items: flex-start; margin-top: 20px;">
+                    <div class="col">
+                        <div style="background: var(--theme-light); padding: 15px; border-radius: 16px; border: 1px solid var(--theme-teal); border-top: 6px solid var(--theme-blue); text-align: center; margin-bottom: 10px;">
+                            <h3 style="color: var(--theme-teal); font-size: 1.2em;">1. Near Work</h3>
+                            <p style="font-size: 1em; font-weight: 600; margin: 10px 0;">Digital Strain</p>
+                            <p style="font-size: 0.85em; opacity: 0.7; margin: 0;">Phones • Laptops • Books</p>
+                        </div>
+                        <img src="assets/digital_strain.png" alt="Digital Eye Strain" class="slide-image" style="max-height: 140px;">
+                    </div>
+                    <div class="col">
+                        <div style="background: var(--theme-light); padding: 15px; border-radius: 16px; border: 1px solid var(--theme-teal); border-top: 6px solid var(--theme-blue); text-align: center; margin-bottom: 10px;">
+                            <h3 style="color: var(--theme-teal); font-size: 1.2em;">2. Lack of Light</h3>
+                            <div class="success-box" style="margin: 10px auto; padding: 10px; font-size: 0.9em; box-shadow: none; border-width: 2px; border-left-width: 4px;">
+                                Sunlight → Dopamine
+                            </div>
+                            <p style="font-size: 0.85em; font-weight: 600; margin: 0; padding-top: 5px;">Dopamine Inhibits Growth</p>
+                        </div>
+                        <img src="assets/sunlight_eye.png" alt="Sunlight and Dopamine" class="slide-image" style="max-height: 140px;">
+                    </div>
+                </div>
+                <aside class="notes">
+                    The Cause:
+                    Why is this happening to our generation specifically? Near work and lack of light.
+
+                    Spending hours a day staring at phones and laptops causes severe eye strain. When you do near work for too long, your eye gets a signal to keep growing to adjust to that close distance.
+
+                    We also aren't getting enough outdoor time. Natural sunlight triggers dopamine in the retina, which actually helps reduce eye growth. This is different from the dopamine you get from things like social media, which affects your brain’s reward system. If you’re inside all day, your eyes don't get this beneficial dopamine, so they just keep elongating.
+                </aside>
+            </section>
+
             <!-- Slide: Axial Elongation -->
             <section data-background-color="#FFFFFF">
                 <h2>Structural Change</h2>
-                <div class="container">
+                <div class="container" style="align-items: flex-start;">
                     <div class="col" style="text-align: center;">
-                        <h3>Perfect Eye: <span style="color: grey;">Focus on Retina</span></h3>
-                        <h3 style="color: var(--theme-teal);">Myopic Eye: <span style="color: var(--theme-teal);">Focus in Middle</span></h3>
-                        <div class="alert-box" style="margin-top: 10px; padding: 15px; width: 100%; box-sizing: border-box; text-align: left;">
-                           <strong style="font-size: 1.0em; text-align: center; display: block;">AXIAL ELONGATION (How & Why)</strong>
-                           <span style="font-size: 0.70em; line-height: 1.3; display: inline-block; margin-top: 10px;">
-                           <strong style="color: var(--theme-teal);">What happens:</strong> The eyeball physically grows and stretches from front to back, turning more oval-shaped.<br><br>
-                           <strong style="color: var(--theme-teal);">How it occurs:</strong> Prolonged near-work locks focusing muscles. Without natural sunlight, the eye lacks dopamine (a chemical that halts eye growth). The eye mistakenly signals itself to stretch out.<br><br>
-                           <strong style="color: var(--theme-teal);">The result:</strong> Incoming light converges before hitting the retina, blurring distance. Stretched eyes cannot shrink, making prevention crucial.
-                           </span>
+                        <h3 style="font-size: 1.1em;">Perfect Eye: <span style="color: grey;">Focus on Retina</span></h3>
+                        <h3 style="color: var(--theme-teal); font-size: 1.1em;">Myopic Eye: <span style="color: var(--theme-teal);">Focus in Middle</span></h3>
+                        
+                        <div class="alert-box" style="margin-top: 10px; padding: 12px; width: 100%; box-sizing: border-box; text-align: left; font-size: 0.8em;">
+                           <strong>AXIAL ELONGATION:</strong> 
+                           The eyeball physically grows and stretches longer than normal. Light stops before reaching the retina, causing blur. Once stretched, the eye cannot shrink back.
                         </div>
                     </div>
-                    <div class="col">
-                        <img src="myopia_eye.png" alt="Myopia Eye Illustration" class="slide-image">
+                    <div class="col" style="text-align: center;">
+                        <img src="assets/myopia_eye.png" alt="Myopia Eye Illustration" class="slide-image" style="max-height: 250px;">
                     </div>
                 </div>
                 <aside class="notes">
@@ -370,9 +466,9 @@
             <section data-background-color="#FFFFFF">
                 <h2>Future Risks</h2>
                 <h3>What happens when we're older?</h3>
-                <div class="container" style="margin-top: 30px;">
+                <div class="container" style="margin-top: 15px;">
                     <div class="col" style="text-align: center;">
-                        <img src="glaucoma_illustration.png" alt="Glaucoma Illustration" style="max-height: 180px; border-radius: 12px; margin-bottom: -15px; border: 3px solid var(--theme-teal);">
+                        <img src="assets/glaucoma_illustration.png" alt="Glaucoma Illustration" style="max-height: 140px; border-radius: 12px; margin-bottom: -15px; border: 3px solid var(--theme-teal);">
                         <div class="alert-box">
                            <strong>Glaucoma</strong><br>
                            <span style="font-size: 0.8em; opacity: 0.8;">Optic nerve damage</span><br>
@@ -380,7 +476,7 @@
                         </div>
                     </div>
                     <div class="col" style="text-align: center;">
-                        <img src="retina_detachment_illustration.png" alt="Retinal Detachment Illustration" style="max-height: 180px; border-radius: 12px; margin-bottom: -15px; border: 3px solid var(--theme-teal);">
+                        <img src="assets/retina_detachment_illustration.png" alt="Retinal Detachment Illustration" style="max-height: 140px; border-radius: 12px; margin-bottom: -15px; border: 3px solid var(--theme-teal);">
                         <div class="alert-box">
                            <strong>Retinal Detachment</strong><br>
                            <span style="font-size: 0.8em; opacity: 0.8;">Retina tearing away</span><br>
@@ -388,49 +484,16 @@
                         </div>
                     </div>
                 </div>
-                <h3 style="margin-top: 50px; color: var(--theme-teal);">It's more than just glasses.</h3>
+                <h3 style="margin-top: 25px; color: var(--theme-teal);">It's more than just glasses.</h3>
                 <aside class="notes">
                     That stretching also puts tension on the retina, which can lead to serious issues like glaucoma or retinal detachment when we get older. Glaucoma is damage to the optic nerve, often from pressure in the eye, and can lead to vision loss. Retinal detachment is when the retina pulls away from the back of the eye and can cause permanent blindness if not treated quickly.
-                </aside>
-            </section>
-
-            <!-- Slide: Causes Combined -->
-            <section data-background-color="#FFFFFF">
-                <h2>Why our generation?</h2>
-                <div class="container" style="align-items: flex-start; margin-top: 20px;">
-                    <div class="col">
-                        <div style="background: var(--theme-light); padding: 25px; border-radius: 16px; border: 1px solid var(--theme-teal); border-top: 6px solid var(--theme-blue); text-align: center; margin-bottom: 20px;">
-                            <h3 style="color: var(--theme-teal); font-size: 1.2em;">1. Near Work</h3>
-                            <p style="font-size: 1em; font-weight: 600; margin: 10px 0;">Digital Strain</p>
-                            <p style="font-size: 0.85em; opacity: 0.7; margin: 0;">Phones • Laptops • Books</p>
-                        </div>
-                        <img src="digital_strain.png" alt="Digital Eye Strain" class="slide-image" style="max-height: 180px;">
-                    </div>
-                    <div class="col">
-                        <div style="background: var(--theme-light); padding: 25px; border-radius: 16px; border: 1px solid var(--theme-teal); border-top: 6px solid var(--theme-blue); text-align: center; margin-bottom: 20px;">
-                            <h3 style="color: var(--theme-teal); font-size: 1.2em;">2. Lack of Light</h3>
-                            <div class="success-box" style="margin: 10px auto; padding: 10px; font-size: 0.9em; box-shadow: none; border-width: 2px; border-left-width: 4px;">
-                                Sunlight → Dopamine
-                            </div>
-                            <p style="font-size: 0.85em; font-weight: 600; margin: 0; padding-top: 5px;">Dopamine Inhibits Growth</p>
-                        </div>
-                        <img src="sunlight_eye.png" alt="Sunlight and Dopamine" class="slide-image" style="max-height: 180px;">
-                    </div>
-                </div>
-                <aside class="notes">
-                    The Cause:
-                    Why is this happening to our generation specifically? Near work and lack of light.
-
-                    First, spending hours staring at close objects (like phones and laptops) causes severe digital strain. The eye gets a signal to keep growing to adjust to that close distance.
-
-                    Second, we aren't getting enough outdoor time. Natural sunlight triggers dopamine in the retina, which effectively helps reduce eye growth. If you’re inside all day, your eyes don't get this inhibitor, so they just keep elongating.
                 </aside>
             </section>
 
             <!-- Slide: Fixing it -->
             <section data-background-color="#FFFFFF">
                 <h2>Fixing It: "Eye Braces"</h2>
-                <div class="container" style="align-items: center; margin-bottom: 30px;">
+                <div class="container" style="align-items: center; margin-bottom: 15px;">
                     <div class="col">
                         <ul class="styled-list">
                             <li><strong>Ortho-K:</strong> Sleep-in lenses</li>
@@ -438,7 +501,7 @@
                         </ul>
                     </div>
                     <div class="col" style="text-align: center;">
-                        <img src="orthok_lens_illustration.png" alt="Ortho-K Contact Lens Diagram" style="max-height: 220px; border-radius: 50%; border: 4px solid var(--theme-teal);">
+                        <img src="assets/orthok_lens_illustration.png" alt="Ortho-K Contact Lens Diagram" style="max-height: 220px; border-radius: 50%; border: 4px solid var(--theme-teal);">
                     </div>
                 </div>
                 <div style="text-align: center; width: 100%;">
@@ -459,28 +522,60 @@
             <section data-background-color="#FFFFFF">
                 <h2>Protect Your Future</h2>
                 
-                <div style="max-width: 85%; margin: 0 auto;">
-                    <details class="mind-map-node">
-                        <summary>90 Mins: Sunlight Breaks</summary>
-                        <div class="mind-map-content">
-                            <strong>How it helps axial elongation:</strong> Natural sunlight stimulates the retina to release dopamine. Dopamine acts as a natural inhibitor against eye growth, effectively halting or slowing down further axial elongation. Being outdoors essentially tells the eye to stop stretching.
-                        </div>
-                    </details>
+                <div style="position: relative; margin: 5px auto 0; width: 100%; max-width: 900px; height: 120px;">
+                    <!-- Drawn connecting lines -->
+                    <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+                        <path d="M 450,25 L 200,25 L 200,75" stroke="var(--theme-blue)" stroke-width="3" fill="none"/>
+                        <path d="M 450,45 L 450,75" stroke="var(--theme-blue)" stroke-width="3" fill="none"/>
+                        <path d="M 450,25 L 700,25 L 700,75" stroke="var(--theme-blue)" stroke-width="3" fill="none"/>
+                    </svg>
                     
-                    <details class="mind-map-node">
-                        <summary>Break Time: Limit Continuous Near Work</summary>
-                        <div class="mind-map-content">
-                            <strong>How effective is it?</strong> Taking regular breaks is highly effective at reducing digital eye strain. Continuous near work locks the eye's focusing muscles in a spasmed state, triggering the eyeball to elongate. Limiting this through frequent breaks interrupts that harmful growth signal.
-                        </div>
-                    </details>
+                    <!-- Central Node -->
+                    <div style="display: flex; justify-content: center; position: absolute; width: 100%; top: 0px;">
+                        <button class="fc-node node-blue-1" style="width: 200px; padding: 10px;" onclick="showInfo('main')">
+                            Daily Action Plan
+                        </button>
+                    </div>
                     
-                    <details class="mind-map-node">
-                        <summary>Eye Exam: Monitor & Treat</summary>
-                        <div class="mind-map-content">
-                            <strong>What specific exam?</strong> Request a <strong>Comprehensive Eye Exam with a Cycloplegic Refraction</strong> and <strong>Axial Length Measurement (Biometry)</strong>. A standard visual acuity test is not enough. Biometry physically measures the length of your eyeball to precisely track axial elongation.
-                        </div>
-                    </details>
+                    <!-- Child Nodes -->
+                    <div style="display: flex; justify-content: space-between; position: absolute; width: 100%; top: 60px; z-index: 2;">
+                        <button class="fc-node node-teal-1" style="width: 240px;" onclick="showInfo('sunlight')">
+                            1. Sunlight Breaks
+                        </button>
+                        <button class="fc-node node-blue-2" style="width: 240px; margin-top: 10px;" onclick="showInfo('breaks')">
+                            2. Screen Breaks
+                        </button>
+                        <button class="fc-node node-green-1" style="width: 240px;" onclick="showInfo('exam')">
+                            3. Eye Exam
+                        </button>
+                    </div>
                 </div>
+
+                <div id="info-display">
+                    <div id="info-main" class="info-content active" style="text-align: center;">
+                        <strong style="font-size: 1.3em; color: var(--theme-blue);">Strategic Action Plan</strong><br>
+                        <p style="margin-top: 15px; font-weight: 500;">Click on any of the colored nodes in the mindmap above to explore specific mechanisms and actions you can take today to protect your vision long-term.</p>
+                    </div>
+                    <div id="info-sunlight" class="info-content">
+                        <strong style="color: var(--theme-teal); font-size: 1.2em;">Sunlight (90 Mins Daily)</strong><br>
+                        <p style="margin-top: 10px;"><strong>How it halts elongation:</strong> Natural sunlight intensely stimulates the retina to release dopamine. Dopamine acts as a natural inhibitor against eye growth, effectively telling the eye to stop stretching.</p>
+                    </div>
+                    <div id="info-breaks" class="info-content">
+                        <strong style="color: #1E3A8A; font-size: 1.2em;">Limit Continuous Near Work</strong><br>
+                        <p style="margin-top: 10px;"><strong>Interrupting the mechanism:</strong> Taking regular breaks is highly effective at reducing digital eye strain. Continuous near work locks the eye's focusing muscles in a spasmed state, triggering the eyeball to elongate. Frequent breaks interrupt this harmful growth signal.</p>
+                    </div>
+                    <div id="info-exam" class="info-content">
+                        <strong style="color: #059669; font-size: 1.2em;">Monitor & Treat</strong><br>
+                        <p style="margin-top: 10px;"><strong>What specific exam?</strong> Request a <strong>Cycloplegic Refraction</strong> and <strong>Axial Length Measurement (Biometry)</strong>. A basic visual acuity test is not enough. Biometry physically measures the length of your eyeball to precisely track axial elongation down to the millimeter.</p>
+                    </div>
+                </div>
+                
+                <script>
+                function showInfo(id) {
+                    document.querySelectorAll('.info-content').forEach(el => el.classList.remove('active'));
+                    document.getElementById('info-' + id).classList.add('active');
+                }
+                </script>
 
                 <aside class="notes">
                     What you can do right now:

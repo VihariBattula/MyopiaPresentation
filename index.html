@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>The Myopia Epidemic</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+
+    <!-- Modern, Professional Premium Styling -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap');
+
+        :root {
+            --theme-light: #FFFFFF;
+            --theme-blue: #1E3A8A;
+            --theme-teal: #0D9488;
+        }
+
+        .reveal {
+            font-family: 'Inter', sans-serif;
+            font-size: 32px;
+            color: var(--theme-blue);
+            background-color: var(--theme-light);
+        }
+
+        .reveal .slides section,
+        .reveal .slides section>section {
+            line-height: 1.4;
+            font-weight: 400;
+        }
+
+        .reveal h1,
+        .reveal h2,
+        .reveal h3,
+        .reveal h4,
+        .reveal h5,
+        .reveal h6 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--theme-blue);
+            font-weight: 800;
+            text-transform: none;
+            text-shadow: none;
+            word-wrap: break-word;
+            letter-spacing: -0.02em;
+        }
+
+        .reveal h1 {
+            font-size: 2.2em;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .reveal h2 {
+            font-size: 1.5em;
+            border-bottom: 4px solid var(--theme-teal);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .reveal h3 {
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .reveal a {
+            color: var(--theme-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .reveal a:hover {
+            color: var(--theme-blue);
+            text-shadow: none;
+        }
+
+        .reveal ul,
+        .reveal ol {
+            display: block;
+            text-align: left;
+            margin: 0 0 0 1em;
+        }
+
+        .reveal li {
+            margin-bottom: 20px;
+            padding-left: 10px;
+        }
+
+        .reveal li::marker {
+            color: var(--theme-teal);
+            font-weight: bold;
+        }
+
+        .reveal p {
+            margin: 20px 0;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .reveal strong {
+            color: var(--theme-blue);
+            font-weight: 600;
+        }
+
+        /* Title Slide Styling */
+        .title-slide h1 {
+            border-bottom: none;
+            color: var(--theme-blue);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .title-slide h3 {
+            color: var(--theme-teal);
+            font-weight: 600;
+        }
+
+        .title-slide .quote {
+            font-style: italic;
+            color: var(--theme-blue);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 1.2em;
+            margin-top: 60px;
+            padding: 25px 30px;
+            border-left: 6px solid var(--theme-teal);
+            background: var(--theme-light);
+            display: inline-block;
+        }
+
+        /* Header and Footer styling */
+        .beamer-header,
+        .beamer-footer {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            color: var(--theme-blue);
+            background-color: var(--theme-light);
+            font-size: 20px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 0 40px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .beamer-header {
+            top: 0;
+            border-bottom: 2px solid var(--theme-teal);
+        }
+
+        .beamer-footer {
+            bottom: 0;
+            border-top: 2px solid var(--theme-teal);
+        }
+
+        .beamer-header .left,
+        .beamer-footer .left {
+            justify-self: start;
+        }
+
+        .beamer-header .center,
+        .beamer-footer .center {
+            justify-self: center;
+        }
+
+        .beamer-header .right,
+        .beamer-footer .right {
+            justify-self: end;
+        }
+
+        /* Layout & Cards */
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .col {
+            flex: 1;
+            text-align: left;
+        }
+
+        /* Highlight boxes */
+        .alert-box,
+        .success-box {
+            padding: 25px;
+            margin: 30px auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            font-weight: 500;
+            max-width: 85%;
+        }
+
+        .alert-box {
+            background-color: var(--theme-light);
+            border: 2px solid var(--theme-blue);
+            border-left: 6px solid var(--theme-blue);
+            color: var(--theme-blue);
+        }
+
+        .alert-box strong {
+            color: var(--theme-blue);
+        }
+
+        .success-box {
+            background-color: var(--theme-light);
+            border: 2px solid var(--theme-teal);
+            border-left: 6px solid var(--theme-teal);
+            color: var(--theme-teal);
+        }
+
+        .success-box strong {
+            color: var(--theme-teal);
+        }
+
+        .info-box {
+            background-color: var(--theme-light);
+            border: 2px solid var(--theme-blue);
+            border-left: 6px solid var(--theme-blue);
+            color: var(--theme-blue);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 0 auto;
+            max-width: 85%;
+        }
+
+        .info-box strong {
+            color: var(--theme-blue);
+        }
+
+        .slide-image {
+            border-radius: 16px;
+            box-shadow: none;
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border: 4px solid var(--theme-teal);
+            display: block;
+            margin: 0 auto;
+        }
+
+        ul.styled-list {
+            margin: 0 auto !important;
+            max-width: 85%;
+        }
+
+        ul.styled-list li {
+            background: var(--theme-light);
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--theme-teal);
+            font-size: 1.1em;
+            list-style-type: none;
+            position: relative;
+            color: var(--theme-blue);
+        }
+
+        ul.styled-list li::before {
+            content: "•";
+            color: var(--theme-teal);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+            font-size: 1.5em;
+            vertical-align: middle;
+            line-height: 1;
+        }
+
+
+        /* Progress Bar top positioning */
+        .reveal .progress {
+            top: 0 !important;
+            bottom: auto !important;
+            height: 8px !important;
+            z-index: 100 !important;
+        }
+
+        .reveal .progress span {
+            background-color: var(--theme-teal) !important;
+        }
+
+
+        /* Interactive Flowchart Diagram */
+        .fc-node {
+            background: white;
+            border: 3px solid var(--theme-blue);
+            border-radius: 12px;
+            padding: 10px 15px;
+            cursor: pointer;
+            position: relative;
+            font-weight: 700;
+            font-size: 0.75em;
+            color: var(--theme-blue);
+            z-index: 2;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            font-family: inherit;
+        }
+
+        .fc-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+            border-color: var(--theme-teal);
+        }
+
+        .fc-node.node-blue-1 {
+            background-color: #EFF6FF;
+            border-color: #1E3A8A;
+        }
+
+        .fc-node.node-teal-1 {
+            background-color: #F0FDFA;
+            border-color: #0D9488;
+        }
+
+        .fc-node.node-blue-2 {
+            background-color: #DBEAFE;
+            border-color: #2563EB;
+        }
+
+        .fc-node.node-green-1 {
+            background-color: #ECFDF5;
+            border-color: #059669;
+        }
+
+        #info-display {
+            background: #F8FAFC;
+            border: 3px dashed var(--theme-teal);
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin: 10px auto 0;
+            text-align: left;
+            font-size: 0.75em;
+            min-height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #334155;
+            max-width: 85%;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .info-content {
+            display: none;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+
+        .info-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mind Map Styling */
+        details.mind-map-node {
+            background: var(--theme-light);
+            border: 2px solid var(--theme-teal);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+        }
+
+        details.mind-map-node[open] {
+            border-color: var(--theme-blue);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        details.mind-map-node summary {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: var(--theme-blue);
+            outline: none;
+            list-style: none;
+            /* remove default triangle in some browsers */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.mind-map-node summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details.mind-map-node summary::after {
+            content: '+';
+            font-size: 1.5em;
+            color: var(--theme-teal);
+            transition: transform 0.3s ease;
+        }
+
+        details.mind-map-node[open] summary::after {
+            content: '−';
+            transform: rotate(180deg);
+        }
+
+        .mind-map-content {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed rgba(13, 148, 136, 0.2);
+            font-size: 0.85em;
+            color: var(--theme-blue);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title Slide -->
+            <section class="title-slide" data-background-color="#FFFFFF">
+                <h1>The Myopia Epidemic</h1>
+                <h3>Our Generation's Vision Crisis</h3>
+                <h4 style="color: var(--theme-teal); margin-top: 20px; margin-bottom: 5px;">By Vihari Battula</h4>
+                <h5 style="color: var(--theme-blue); font-weight: 500; font-size: 0.8em; margin: 0; opacity: 0.8;">[9th Grade] • [MICDS]</h5>
+                <p
+                    style="text-align: center; color: var(--theme-blue); font-weight: 600; font-size: 0.9em; margin-top: 30px; text-transform: uppercase; letter-spacing: 2px;">
+                    Research Presentation</p>
+
+                <div class="quote">
+                    "Sarvendriyanam Nayanam Pradhanam" <br>
+                    <span
+                        style="font-size: 0.85em; color: var(--theme-blue); opacity: 0.8; font-weight: 400; display: block; margin-top: 8px;">(Of
+                        all the senses, sight is the most important)</span>
+                </div>
+                <aside class="notes">
+                    Sarvendriyanam Nayanam Pradhanam.
+                    This is a Sanskrit quote that means among all the senses, the eyes are the most important.
+                </aside>
+            </section>
+
+            <!-- Slide: The Scope -->
+            <section data-background-color="#FFFFFF">
+                <h2>The Myopia Epidemic</h2>
+                <h3>The population in 2050?</h3>
+                <div class="success-box" style="font-size: 2.5em; padding: 50px;">
+                    50% Nearsighted
+                </div>
+                <h4 style="color: var(--theme-teal);">~5 Billion People</h4>
+                <aside class="notes">
+                    We are currently living through what scientists call a Myopia Epidemic. By the year 2050, it’s
+                    predicted that half the world’s population will be nearsighted. That’s billions of people.
+                </aside>
+            </section>
+
+            <!-- Slide: What is it -->
+            <section data-background-color="#FFFFFF">
+                <h2>Activity: Muscle Test</h2>
+                <p>1. Put your thumb near your nose.</p>
+                <p>2. Focus on your thumbnail.</p>
+                <p>3. Now focus on a distant wall.</p>
+                <h3 style="margin-top: 40px; color: var(--theme-blue);">Feel the strain?</h3>
+                <aside class="notes">
+                    What is Myopia?
+                    Myopia comes from Greek roots: myo meaning to close and ops meaning eye, referring to how people
+                    squint to see clearly. Myopia is Latin for short sightedness.
+                </aside>
+            </section>
+
+
+
+
+
+
+
+            <!-- Slide: Causes Combined -->
+            <section data-background-color="#FFFFFF">
+                <h2>Why our generation?</h2>
+                <div class="container" style="align-items: flex-start; margin-top: 20px;">
+                    <div class="col">
+                        <div
+                            style="background: var(--theme-light); padding: 15px; border-radius: 16px; border: 1px solid var(--theme-teal); border-top: 6px solid var(--theme-blue); text-align: center; margin-bottom: 10px;">
+                            <h3 style="color: var(--theme-teal); font-size: 1.2em;">1. Near-Work</h3>
+                            <p style="font-size: 1em; font-weight: 600; margin: 10px 0;">Digital Strain</p>
+                            <p style="font-size: 0.85em; opacity: 0.7; margin: 0;">Phones • Laptops • Books</p>
+                        </div>
+                        <img src="assets/digital_strain.png" alt="Digital Eye Strain" class="slide-image"
+                            style="max-height: 140px;">
+                    </div>
+                    <div class="col">
+                        <div
+                            style="background: var(--theme-light); padding: 15px; border-radius: 16px; border: 1px solid var(--theme-teal); border-top: 6px solid var(--theme-blue); text-align: center; margin-bottom: 10px;">
+                            <h3 style="color: var(--theme-teal); font-size: 1.2em;">2. Lack of Light</h3>
+                            <div class="success-box"
+                                style="margin: 10px auto; padding: 10px; font-size: 0.9em; box-shadow: none; border-width: 2px; border-left-width: 4px;">
+                                Sunlight → Dopamine
+                            </div>
+                            <p style="font-size: 0.85em; font-weight: 600; margin: 0; padding-top: 5px;">Dopamine
+                                Inhibits Growth</p>
+                        </div>
+                        <img src="assets/sunlight_eye.png" alt="Sunlight and Dopamine" class="slide-image"
+                            style="max-height: 140px;">
+                    </div>
+                </div>
+                <aside class="notes">
+                    The Cause:
+                    Why is this happening to our generation specifically? Near-work and lack of light.
+
+                    Spending hours a day staring at phones and laptops causes severe eye strain. When you do near-work
+                    for too long, your eye gets a signal to keep growing to adjust to that close distance.
+
+                    We also aren't getting enough outdoor time. Natural sunlight triggers dopamine in the retina, which
+                    actually helps reduce eye growth. This is different from the dopamine you get from things like
+                    social media, which affects your brain’s reward system. If you’re inside all day, your eyes don't
+                    get this beneficial dopamine, so they just keep elongating.
+                </aside>
+            </section>
+
+            <!-- Slide: Axial Elongation -->
+            <section data-background-color="#FFFFFF">
+                <h2>Structural Change</h2>
+                <div class="container" style="align-items: flex-start;">
+                    <div class="col" style="text-align: center;">
+                        <h3 style="font-size: 1.1em;">Perfect Eye: <span style="color: var(--theme-teal);">Focus on
+                                Retina</span></h3>
+                        <h3 style="color: var(--theme-teal); font-size: 1.1em;">Myopic Eye: <span
+                                style="color: var(--theme-teal);">Focus in Middle</span></h3>
+
+                        <div class="alert-box"
+                            style="margin-top: 10px; padding: 12px; width: 100%; box-sizing: border-box; text-align: left; font-size: 0.8em;">
+                            <strong>AXIAL ELONGATION:</strong>
+                            The eyeball physically grows and stretches longer than normal. Light stops before reaching
+                            the retina, causing blur. Once stretched, the eye cannot shrink back.
+                        </div>
+                    </div>
+                    <div class="col" style="text-align: center;">
+                        <img src="assets/myopia_eye.png" alt="Myopia Eye Illustration" class="slide-image"
+                            style="max-height: 250px;">
+                    </div>
+                </div>
+                <aside class="notes">
+                    So, what’s actually happening? Most people think myopia is just weak eyes, but it’s actually about
+                    axial elongation. Axial elongation means the eyeball physically grows longer than normal.
+
+                    In a perfect eye, the light enters through the front and hits the retina at the back perfectly. But
+                    in a myopic eye, the eyeball grows too long, causing the light to stop traveling before reaching the
+                    retina. As a result, everything in the distance looks like a blurry mess or pixelated. And once the
+                    eye stretches, it is irreversible and cannot shrink back. The best we can do is slow or stop further
+                    progression.
+                </aside>
+            </section>
+
+            <!-- Slide: Interactive 3D Model -->
+            <section data-background-color="#FFFFFF">
+                <h2>Interactive 3D Model</h2>
+                <div style="position: relative; width: 100%; height: 550px; margin-top: 10px; border-radius: 16px; overflow: hidden; border: 3px solid var(--theme-blue); box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <iframe src="MyopicModel.html" style="width: 100%; height: 100%; border: none;" allow="autoplay; encrypted-media; fullscreen"></iframe>
+                </div>
+                <p style="font-size: 0.7em; margin-top: 15px; opacity: 0.9; font-weight: 600; color: var(--theme-blue);">Use the panel controls to simulate <strong>Axial Elongation</strong> and pathologies.</p>
+                <aside class="notes">
+                    Now, let's take a look at a 3D simulation I built to help explain this better. 
+                    This tool allows us to visualize how axial elongation physically affects the eye's focal point.
+                    You can see the light rays failing to reach the retina as the axis lengthens.
+                    We can also simulate complications like glaucoma and retinal detachment to see the structural changes and how they impact vision.
+                </aside>
+            </section>
+
+            <!-- Slide: Consequences -->
+            <section data-background-color="#FFFFFF">
+                <h2>Future Risks</h2>
+                <h3>Long-Term Health Impacts</h3>
+                <div class="container" style="margin-top: 15px;">
+                    <div class="col" style="text-align: center;">
+                        <img src="assets/glaucoma_illustration.png" alt="Glaucoma Illustration"
+                            style="max-height: 140px; border-radius: 12px; margin-bottom: -15px; border: 3px solid var(--theme-teal);">
+                        <div class="alert-box">
+                            <strong>Glaucoma</strong><br>
+                            <span style="font-size: 0.8em; opacity: 0.8;">Optic nerve damage</span><br>
+                            <span
+                                style="font-size: 0.75em; color: var(--theme-teal); font-weight: 600; display: inline-block; margin-top: 8px;">Risk
+                                peaks in High Myopia (≤ -6.00D)</span>
+                        </div>
+                    </div>
+                    <div class="col" style="text-align: center;">
+                        <img src="assets/retina_detachment_illustration.png" alt="Retinal Detachment Illustration"
+                            style="max-height: 140px; border-radius: 12px; margin-bottom: -15px; border: 3px solid var(--theme-teal);">
+                        <div class="alert-box">
+                            <strong>Retinal Detachment</strong><br>
+                            <span style="font-size: 0.8em; opacity: 0.8;">Retina tearing away</span><br>
+                            <span
+                                style="font-size: 0.75em; color: var(--theme-teal); font-weight: 600; display: inline-block; margin-top: 8px;">Risk
+                                peaks in High Myopia (≤ -6.00D)</span>
+                        </div>
+                    </div>
+                </div>
+                <h3 style="margin-top: 25px; color: var(--theme-teal);">It's more than just glasses.</h3>
+                <aside class="notes">
+                    This structural elongation stretches and thins the delicate tissues of the eye, significantly
+                    elevating the risk of serious complications later in life.
+
+                    Glaucoma is a progressive disease with gradual optic nerve damage, while Retinal Detachment is an
+                    acute emergency where the stretched retina tears and pulls away.
+
+                    Can they happen at the same time? A patient can have both, but they develop independently. They
+                    don't typically manifest at similar stages; retinal tears can occur suddenly even in younger adults
+                    with high myopia, whereas glaucoma typically develops insidiously over decades.
+
+                    Should you be worried? You don't need to panic, but you absolutely should be vigilant. Once your
+                    prescription crosses into "High Myopia", the risks for both peak dramatically. Regular comprehensive
+                    eye exams with retinal imaging are non-negotiable for catching and treating these issues early.
+                </aside>
+            </section>
+
+            <!-- Slide: The LASIK Myth -->
+            <section data-background-color="#FFFFFF">
+                <h2>The LASIK "Cure"</h2>
+                <h3>Myth vs. Reality</h3>
+                <div class="container" style="align-items: center; margin-top: 20px;">
+                    <div class="col" style="text-align: center;">
+                        <img src="assets/myopia_eye.png" alt="Myopic Eye vs Lasik"
+                            style="max-height: 180px; border-radius: 12px; border: 3px solid var(--theme-blue); opacity: 0.8;">
+                        <h4 style="margin-top: 15px; color: var(--theme-blue);">Myth: A One-Shot Fix</h4>
+                    </div>
+                    <div class="col" style="text-align: center;">
+                        <div class="alert-box"
+                            style="padding: 20px; font-size: 0.9em; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                            <strong>Reality:</strong><br>
+                            <span style="font-size: 1.1em; color: var(--theme-teal); font-weight: 600;">The eye remains
+                                stretched.</span><br><br>
+                            <span style="opacity: 0.85;">LASIK reshapes the surface (cornea).<br>It does
+                                <strong>not</strong> shrink the physical eyeball.</span>
+                        </div>
+                    </div>
+                </div>
+                <h3 style="margin-top: 25px; color: #DC2626; font-size: 1.1em;">The long-term risks are perfectly
+                    intact.</h3>
+                <aside class="notes">
+                    Many people take myopia lightly, assuming, "I'll just get LASIK surgery when I'm older, it's a
+                    one-shot fix!" This is a very dangerous myth.
+
+                    The reality is that LASIK surgery only reshapes the very front of the eye—the cornea—so you no
+                    longer need glasses to focus. But it does absolutely nothing to shrink the physical length of your
+                    elongated eyeball.
+
+                    This means all the long-term blinding risks we just discussed—retinal detachment and glaucoma—are
+                    still there, exactly as before, even if you now have perfect 20/20 vision without glasses. The
+                    structural damage remains. This is exactly why taking myopia lightly and simply "laser-ing it away"
+                    later doesn't work. Preventing myopia before it starts—or acting quickly to stop its progression—is
+                    absolutely essential. You cannot undo an elongated eye.
+                </aside>
+            </section>
+
+            <!-- Slide: Mitigating it -->
+            <section data-background-color="#FFFFFF">
+                <h2>Mitigating It: "Eye Braces"</h2>
+                <div class="container" style="align-items: center; margin-bottom: 15px;">
+                    <div class="col">
+                        <ul class="styled-list">
+                            <li><strong>Ortho-K:</strong> Sleep-in lenses</li>
+                            <li><strong>Atropine:</strong> Medicated drops</li>
+                        </ul>
+                    </div>
+                    <div class="col" style="text-align: center;">
+                        <img src="assets/orthok_lens_illustration.png" alt="Ortho-K Contact Lens Diagram"
+                            style="max-height: 220px; border-radius: 50%; border: 4px solid var(--theme-teal);">
+                    </div>
+                </div>
+                <div style="text-align: center; width: 100%;">
+                    <div class="info-box" style="display: inline-block; margin: 0;">
+                        Standard glasses check the blur, but <strong>don't stop</strong> the eye from growing.
+                    </div>
+                </div>
+                <aside class="notes">
+                    Mitigating it: If you already have myopia, standard glasses help you see, but they don't stop the
+                    eye from growing. However, there are new tools that act like braces for your eyes:
+
+                    Ortho-K: These are special hard contacts you wear only while you sleep. They reshape your eye
+                    overnight so you can see perfectly during the day without glasses.
+
+                    Low-Dose Atropine: These are medicated eye drops used at night that tell the eye to slow down its
+                    growth.
+                </aside>
+            </section>
+
+            <!-- Slide: Actionable -->
+            <section data-background-color="#FFFFFF">
+                <h2>Protect Your Future</h2>
+
+                <div style="position: relative; margin: 5px auto 0; width: 100%; max-width: 900px; height: 120px;">
+                    <!-- Drawn connecting lines -->
+                    <svg
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+                        <path d="M 450,25 L 200,25 L 200,75" stroke="var(--theme-blue)" stroke-width="3" fill="none" />
+                        <path d="M 450,45 L 450,75" stroke="var(--theme-blue)" stroke-width="3" fill="none" />
+                        <path d="M 450,25 L 700,25 L 700,75" stroke="var(--theme-blue)" stroke-width="3" fill="none" />
+                    </svg>
+
+                    <!-- Central Node -->
+                    <div style="display: flex; justify-content: center; position: absolute; width: 100%; top: 0px;">
+                        <button class="fc-node node-blue-1" style="width: 200px; padding: 10px;"
+                            onclick="showInfo('main')">
+                            Daily Action Plan
+                        </button>
+                    </div>
+
+                    <!-- Child Nodes -->
+                    <div
+                        style="display: flex; justify-content: space-between; position: absolute; width: 100%; top: 60px; z-index: 2;">
+                        <button class="fc-node node-teal-1" style="width: 240px;" onclick="showInfo('sunlight')">
+                            1. Sunlight Breaks
+                        </button>
+                        <button class="fc-node node-blue-2" style="width: 240px; margin-top: 10px;"
+                            onclick="showInfo('breaks')">
+                            2. Screen Breaks
+                        </button>
+                        <button class="fc-node node-green-1" style="width: 240px;" onclick="showInfo('exam')">
+                            3. Eye Exam
+                        </button>
+                    </div>
+                </div>
+
+                <div id="info-display">
+                    <div id="info-main" class="info-content active" style="text-align: center;">
+                        <strong style="font-size: 1.3em; color: var(--theme-blue);">Strategic Action Plan</strong><br>
+                        <p style="margin-top: 15px; font-weight: 500;">Click on any of the colored nodes in the mindmap
+                            above to explore specific mechanisms and actions you can take today to protect your vision
+                            long-term.</p>
+                    </div>
+                    <div id="info-sunlight" class="info-content">
+                        <strong style="color: var(--theme-teal); font-size: 1.2em;">Sunlight (90 Mins
+                            Daily)</strong><br>
+                        <p style="margin-top: 10px;"><strong>How it halts elongation:</strong> Natural sunlight
+                            intensely stimulates the retina to release dopamine. Dopamine acts as a natural inhibitor
+                            against eye growth, effectively telling the eye to stop stretching.</p>
+                    </div>
+                    <div id="info-breaks" class="info-content">
+                        <strong style="color: #1E3A8A; font-size: 1.2em;">Limit Continuous Near-Work</strong><br>
+                        <p style="margin-top: 10px;"><strong>Interrupting the mechanism:</strong> Taking regular breaks
+                            is highly effective at reducing digital eye strain. Continuous near-work locks the eye's
+                            focusing muscles in a spasmed state, triggering the eyeball to elongate. Frequent breaks
+                            interrupt this harmful growth signal.</p>
+                    </div>
+                    <div id="info-exam" class="info-content">
+                        <strong style="color: #059669; font-size: 1.2em;">Monitor & Treat</strong><br>
+                        <p style="margin-top: 10px;"><strong>What specific exam?</strong> Request a <strong>Cycloplegic
+                                Refraction</strong> and <strong>Axial Length Measurement (Biometry)</strong>. A basic
+                            visual acuity test is not enough. Biometry physically measures the length of your eyeball to
+                            precisely track axial elongation down to the millimeter.</p>
+                    </div>
+                </div>
+
+                <script>
+                    function showInfo(id) {
+                        document.querySelectorAll('.info-content').forEach(el => el.classList.remove('active'));
+                        document.getElementById('info-' + id).classList.add('active');
+                    }
+                </script>
+
+                <aside class="notes">
+                    What you can do right now:
+                    Your eyes are still developing. Due to the fact that your eyes are still developing, your eyes might
+                    be rapidly getting worse by the day. You have the power right now to protect your vision for the
+                    next 50 or so years. Put the phone down once in a while, go outside for at least 90 minutes a day,
+                    and if you're struggling to see get a checkup. It's better late than never.
+                </aside>
+            </section>
+
+            <!-- Slide: 20-20-20 -->
+            <section data-background-color="#FFFFFF">
+                <h2>Activity: 20-20-20 Break</h2>
+                <p>Let's try it now!</p>
+                <div class="success-box" style="font-size: 1.4em; padding: 40px;">
+                    <strong>Every 20 minutes:</strong><br><br>
+                    Look <strong>20 feet</strong> away<br>
+                    for <strong>20 seconds</strong>
+                </div>
+                <h3 style="color: var(--theme-blue); margin-top: 50px;">Thank You!</h3>
+                <aside class="notes">
+                    The 20-20-20 Rule: This is mainly for reducing eye strain and helping prevent or slow further
+                    worsening. Every 20 minutes, look at something 20 feet away for 20 seconds. It helps your eyes ease
+                    and take a rest from the digital strain.
+
+                    Thanks.
+                </aside>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Persistent Header -->
+    <div class="beamer-header">
+        <span class="left">Vihari Battula</span>
+        <span class="center">The Myopia Epidemic</span>
+        <span class="right"></span>
+    </div>
+
+    <div class="beamer-footer">
+        <span class="left"></span>
+        <span class="center" style="opacity: 0.8;">Research Presentation</span>
+        <span class="right" style="font-size: 0.75em; padding-bottom: 5px;">Mentored by Prof. Vinay Kodipelly</span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script>
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            center: true,
+            hash: true,
+            margin: 0.18,
+            transition: 'none',
+            plugins: [RevealNotes]
+        });
+
+        // Removed explicit slide numbering per user request
+    </script>
+</body>
+
+</html>

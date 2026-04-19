@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Cinematic Eye Simulation</title>
+    <title>Academic Cinematic Eye Simulation</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <style>
         :root {
             --bg: #0f172a;
@@ -68,12 +69,12 @@
         .panel-content { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; overflow: hidden; transition: max-height 0.3s ease-in-out, opacity 0.3s; max-height: 600px; opacity: 1; }
         .collapsed .panel-content { max-height: 0; opacity: 0; margin-top: 0; pointer-events: none;}
         
-        p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-muted); }
+        p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-muted); }
         
         .control-block { display: flex; flex-direction: column; margin-bottom: 5px; }
         
         .slider-row { display: flex; flex-direction: column; gap: 4px; }
-        .slider-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        .slider-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-muted); }
         input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--accent); }
         
         .toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 500;}
@@ -96,7 +97,7 @@
 
         /* Info Description Blocks */
         .info-desc {
-            font-size: 11px; line-height: 1.55; color: var(--text-muted);
+            font-size: 13px; line-height: 1.55; color: var(--text-muted);
             background: rgba(56, 189, 248, 0.06); border-left: 2px solid var(--accent);
             padding: 8px 10px; border-radius: 0 6px 6px 0; margin-top: 4px;
             max-height: 0; overflow: hidden; opacity: 0;
@@ -172,23 +173,62 @@
             font-size: 11px; color: var(--text-muted); font-weight: 600;
         }
 
-        /* 3D Hotspots */
-        #annotations-layer { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 5; pointer-events: none; overflow: hidden; }
-        .hotspot-wrapper { position: absolute; transform: translate(-50%, -50%); pointer-events: auto; display: flex; flex-direction: column; align-items: flex-start; z-index: 10; }
-        .hotspot-dot { width: 14px; height: 14px; background: rgba(150,150,150,0.9); border-radius: 50%; box-shadow: 0 0 0 4px rgba(150,150,150,0.2); cursor: pointer; transition: all 0.3s; border: none; padding: 0; margin: 0; appearance: none; }
-        .hotspot-wrapper:hover { z-index: 100; }
-        .hotspot-wrapper:hover .hotspot-dot, .hotspot-dot:focus-visible { transform: scale(1.3); background: var(--accent); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.4);}
-        .hotspot-card {
-            background: var(--panel-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--panel-border); border-radius: 12px; box-shadow: var(--glass-shadow);
-            margin-top: 10px; width: 250px; opacity: 0; max-height: 0; overflow: hidden; color: var(--text-main);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: translateY(-10px); pointer-events: none;
+        /* 3D Annotations */
+        #annotations-layer { position: absolute; inset: 0; z-index: 6; pointer-events: none; overflow: hidden; }
+        .hotspot-marker {
+            position: absolute; width: 12px; height: 12px; border-radius: 999px; transform: translate(-50%, -50%);
+            border: 1px solid rgba(255,255,255,0.75); background: rgba(56, 189, 248, 0.95); cursor: pointer;
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.16), 0 0 18px rgba(56, 189, 248, 0.32);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+            pointer-events: auto; appearance: none; padding: 0; margin: 0; z-index: 8;
         }
-        /* Open card on hover OR when parent wrapper has focus-within (accessible) */
-        .hotspot-wrapper:hover .hotspot-card, .hotspot-wrapper:focus-within .hotspot-card { opacity: 1; max-height: 200px; transform: translateY(0); padding: 12px; pointer-events: auto; }
-        .hotspot-title { font-size: 13px; font-weight: 800; margin-bottom: 4px; border-bottom: 1px solid var(--panel-border); padding-bottom: 4px;}
-        .hotspot-desc { font-size: 11px; line-height: 1.4; color: var(--text-muted); }
-        .annotation-line { position: absolute; background: rgba(120, 120, 120, 0.4); transform-origin: left center; pointer-events: none; z-index: 4; height: 1px; }
+        .hotspot-marker::after {
+            content: ""; position: absolute; inset: 2px; border-radius: inherit; background: rgba(255,255,255,0.9); opacity: 0.45;
+        }
+        .hotspot-marker.is-active, .hotspot-marker:hover, .hotspot-marker:focus-visible {
+            transform: translate(-50%, -50%) scale(1.16);
+            box-shadow: 0 0 0 5px rgba(56, 189, 248, 0.22), 0 0 26px rgba(56, 189, 248, 0.44);
+        }
+        .hotspot-label {
+            position: absolute; display: flex; flex-direction: column; gap: 8px; transform: translate(-50%, -50%);
+            pointer-events: auto; z-index: 9; transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .hotspot-label.label-left { align-items: flex-end; }
+        .hotspot-label.label-right { align-items: flex-start; }
+        .hotspot-pill {
+            background: rgba(15, 23, 42, 0.72); color: #f8fafc; border: 1px solid rgba(148, 163, 184, 0.35);
+            border-radius: 999px; padding: 8px 12px; font: 700 12px/1.1 "Inter", system-ui, sans-serif;
+            letter-spacing: 0.04em; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 10px 24px rgba(2, 6, 23, 0.26), inset 0 0 0 1px rgba(255,255,255,0.06);
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            color: var(--text-main);
+        }
+        .hotspot-label.is-active .hotspot-pill, .hotspot-pill:hover, .hotspot-pill:focus-visible {
+            transform: translateY(-1px); background: rgba(15, 23, 42, 0.88); border-color: rgba(56, 189, 248, 0.55);
+            box-shadow: 0 12px 30px rgba(2, 6, 23, 0.3), 0 0 24px rgba(56, 189, 248, 0.18);
+        }
+        .hotspot-panel {
+            width: min(270px, 32vw); max-height: 0; overflow: hidden; opacity: 0; pointer-events: none;
+            transform: translateY(-6px) scale(0.98); transform-origin: top left;
+            background: rgba(15, 23, 42, 0.74); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(148, 163, 184, 0.28); border-radius: 14px; color: var(--text-main);
+            box-shadow: 0 18px 40px rgba(2, 6, 23, 0.35), 0 0 24px rgba(56, 189, 248, 0.08);
+            transition: max-height 0.28s ease, opacity 0.24s ease, transform 0.24s ease, padding 0.24s ease;
+            padding: 0 14px;
+        }
+        .hotspot-label.label-left .hotspot-panel { transform-origin: top right; }
+        .hotspot-label.is-active .hotspot-panel, .hotspot-label:focus-within .hotspot-panel {
+            max-height: 180px; opacity: 1; transform: translateY(0) scale(1); padding: 12px 14px; pointer-events: auto;
+        }
+        .hotspot-title { font-size: 13px; font-weight: 800; margin-bottom: 3px; }
+        .hotspot-meta { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        .hotspot-desc { font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+        .annotation-line {
+            position: absolute; height: 2px; border-radius: 999px; pointer-events: none; z-index: 7;
+            background: linear-gradient(90deg, rgba(56, 189, 248, 0.7), rgba(148, 163, 184, 0.22));
+            transform-origin: left center; opacity: 0.78; transition: opacity 0.18s ease;
+        }
+        .hotspot-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
         .theme-button { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 4px; border-radius: 50%; width: 30px; height: 30px; display:flex; align-items:center; justify-content:center; transition: 0.2s;}
         .theme-button:hover { background: rgba(120,120,120,0.2); color: var(--text-main); }
@@ -218,45 +258,45 @@
                 <div class="header-bg">
                     <div>
                         <div class="credit">Created by Vihari Battula</div>
-                        <h1>Academic Eye Simulation</h1>
+                        <h1>Interactive Eye Simulator</h1>
                     </div>
                     <button class="theme-button" id="btn-theme" aria-label="Toggle Light/Dark Mode">🌓</button>
                 </div>
-                <p>A premium interactive exploration of human ocular physiology, optics, and pathology.</p>
+                <p>An easy-to-understand interactive exploration of how the human eye works, how it focuses, and what happens when things go wrong.</p>
             </div>
 
             <div class="glass-panel control-block" id="panel-physio">
                 <button class="panel-header" aria-expanded="true" aria-controls="content-physio" onclick="togglePanel('panel-physio')">
-                    <h2>Physiological Controls</h2><span class="panel-toggle-icon">▼</span>
+                    <h2>Basic Eye Controls</h2><span class="panel-toggle-icon">▼</span>
                 </button>
                 <div class="panel-content" id="content-physio">
                     <div class="slider-row">
-                        <div class="slider-labels"><span>Pupil Rest</span><span style="color:var(--accent);">Dilated</span></div>
+                        <div class="slider-labels"><span>Pupil Small (Bright)</span><span style="color:var(--accent);">Dilated Large (Dark)</span></div>
                         <input type="range" id="pupil-dilation" min="0" max="1" step="0.01" value="0.5" aria-label="Pupil Dilation Slider">
                     </div>
                     <div class="slider-row" style="margin-top:8px;">
-                        <div class="slider-labels"><span>Lens Relaxed</span><span style="color:var(--accent);">Accommodated (Near Focus)</span></div>
+                        <div class="slider-labels"><span>Lens Flat (Far Focus)</span><span style="color:var(--accent);">Round (Near Focus)</span></div>
                         <input type="range" id="lens-accomm" min="0" max="1" step="0.01" value="0.0" aria-label="Lens Accommodation Slider">
                     </div>
                     <button class="info-toggle-btn" onclick="toggleInfo('info-physio')">ℹ What do these controls do?</button>
                     <div class="info-desc" id="info-physio">
-                        <strong>Pupil Dilation:</strong> Controls iris aperture diameter. At rest (~3mm), the pupil admits moderate light. Fully dilated (~8mm, mydriasis) — as occurs in darkness or with clinical drops like tropicamide — maximizes light entry. Constriction (miosis) protects the retina from bright light and increases depth of focus.<br><br>
-                        <strong>Lens Accommodation:</strong> Simulates ciliary muscle action on the crystalline lens. When relaxed (slider at 0), zonular ligaments are taut, pulling the lens flat — focused at infinity. When accommodated (slider at 1), the ciliary muscle contracts, zonules slacken, and the elastic lens rounds — shifting focus to near objects. This ability weakens with age (presbyopia). Reset returns to the resting flat state for distance vision.
+                        <strong>Pupil Size:</strong> Controls how much light enters the eye. A larger pupil lets in more light (useful in the dark), while a smaller pupil protects the eye from bright light.<br><br>
+                        <strong>Lens Focus:</strong> The eye's lens changes shape to focus on objects. It stays flat for far-away objects and gets rounder to focus on things close up. This ability weakens as we get older (which is why older adults need reading glasses).
                     </div>
                 </div>
             </div>
 
             <div class="glass-panel control-block" id="panel-optics">
                 <button class="panel-header" aria-expanded="true" aria-controls="content-optics" onclick="togglePanel('panel-optics')">
-                    <h2>Myopia Optics Simulation</h2><span class="panel-toggle-icon">▼</span>
+                    <h2>Nearsightedness (Myopia) Simulator</h2><span class="panel-toggle-icon">▼</span>
                 </button>
                 <div class="panel-content" id="content-optics">
                     <div class="slider-row">
-                        <div class="slider-labels"><span>Normal Axis</span><span style="color:var(--accent);">Elongated</span></div>
+                        <div class="slider-labels"><span>Normal Length</span><span style="color:var(--accent);">Stretched (Myopic)</span></div>
                         <input type="range" id="axial-length" min="0" max="1" step="0.01" value="0.0" aria-label="Axial Elongation Slider">
                     </div>
                     <div class="toggle-row" style="margin-top:8px;">
-                        <span>Apply Concave Contact Lens</span>
+                        <span>Apply Corrective Contact Lens</span>
                         <label class="switch"><input type="checkbox" id="toggle-lens" aria-label="Toggle Concave Lens"><span class="slider"></span></label>
                     </div>
                 </div>
@@ -264,11 +304,11 @@
 
             <div class="glass-panel control-block" id="panel-pathology">
                 <button class="panel-header" aria-expanded="true" aria-controls="content-pathology" onclick="togglePanel('panel-pathology')">
-                    <h2>Medical Pathology Overlays</h2><span class="panel-toggle-icon">▼</span>
+                    <h2>Eye Diseases (Risks of Myopia)</h2><span class="panel-toggle-icon">▼</span>
                 </button>
                 <div class="panel-content" id="content-pathology">
                     <div class="toggle-row">
-                        <span style="color:var(--danger);">Simulate Glaucoma</span>
+                        <span style="color:var(--danger);">Glaucoma (Nerve Damage)</span>
                         <label class="switch"><input type="checkbox" id="toggle-glaucoma" class="danger" aria-label="Toggle Glaucoma"><span class="slider"></span></label>
                     </div>
                     <div class="anim-bar-track" id="glau-bar-track"><div class="anim-bar-fill danger" id="glau-bar-fill"></div></div>
@@ -281,24 +321,24 @@
 
                     <button class="info-toggle-btn" onclick="toggleInfo('info-pathology')">ℹ What happens in these conditions?</button>
                     <div class="info-desc danger-info" id="info-pathology">
-                        <strong>Glaucoma:</strong> Elevated intraocular pressure (IOP) from impaired aqueous humor drainage through the trabecular meshwork. The increased pressure damages retinal ganglion cell axons at the optic nerve head, causing progressive &ldquo;cupping&rdquo; of the optic disc. Vision loss begins peripherally and advances toward central vision if untreated. Animation phases: aqueous buildup → optic disc cupping → nerve fiber damage → peripheral field loss.<br><br>
-                        <strong>Retinal Detachment:</strong> The neural retina separates from the retinal pigment epithelium (RPE). Vitreous traction pulls on the retina creating a tear (most common in the superior-temporal quadrant). Fluid seeps through the tear, lifting the retina away. Patients experience floaters, photopsia (light flashes), and a descending shadow or &ldquo;curtain&rdquo; across their visual field. Animation phases: vitreous traction → tear formation → progressive peeling → curtain descent.
+                        <strong>Glaucoma:</strong> High pressure inside the eye damages the optic nerve (the cable sending images to your brain). This causes a gradual loss of side (peripheral) vision if left untreated.<br><br>
+                        <strong>Retinal Detachment:</strong> The back lining of the eye (retina) tears and pulls away from the wall. Patients often see flashes of light or a dark "curtain" falling over their vision, which is a medical emergency that requires surgery.
                     </div>
                 </div>
             </div>
 
              <div class="glass-panel control-block" id="panel-diag">
                 <button class="panel-header" aria-expanded="true" aria-controls="content-diag" onclick="togglePanel('panel-diag')">
-                    <h2>Diagnostic Scanner Mode</h2><span class="panel-toggle-icon">▼</span>
+                    <h2>Ultrasound & Scanner Mode</h2><span class="panel-toggle-icon">▼</span>
                 </button>
                 <div class="panel-content" id="content-diag">
                     <div class="toggle-row">
-                        <span style="color:var(--success);">Enable Ultrasonic Depth Scan</span>
+                        <span style="color:var(--success);">Turn on Scanner View</span>
                         <label class="switch"><input type="checkbox" id="toggle-diagnostic" class="success" aria-label="Toggle Ultrasonic Scan"><span class="slider"></span></label>
                     </div>
                     <button class="info-toggle-btn" onclick="toggleInfo('info-diag')">ℹ What does the scanner reveal?</button>
                     <div class="info-desc success-info" id="info-diag">
-                        <strong>Diagnostic Scanner</strong> simulates clinical imaging: B-Scan ultrasound and OCT (Optical Coherence Tomography). The false-color depth map reveals internal structural layers — corneal thickness, anterior chamber depth, lens position, and retinal layer integrity. Clinicians use these scans to detect macular edema, retinal thinning, glaucoma-related nerve fiber layer loss, and anterior chamber angle abnormalities. The cross-section clipping plane exposes the eye's internal architecture. The grid overlay simulates scan-line artifacts of real ultrasonic imaging equipment.
+                        <strong>Diagnostic Scanner</strong> acts like an ultrasound for the eye. It reveals the internal layers—like the cornea's thickness and the retina's health. Doctors use these scans to catch problems early, such as retinal thinning or nerve damage. The colored depth map helps them visualize the parts of the eye we normally can't see!
                     </div>
                 </div>
             </div>
@@ -307,7 +347,7 @@
         <!-- Right Sidebar: POV & Utils -->
         <div class="side-bar" style="width: 320px;">
             <div id="pov-container" class="glass-panel" style="padding:0; border:1px solid var(--panel-border);">
-                <div id="pov-header" aria-hidden="true">Retinal Feed (POV)</div>
+                <div id="pov-header" aria-hidden="true">What the Eye Sees (POV)</div>
                 <div id="pov-canvas-wrapper">
                     <div id="pov-flash"></div>
                     <div id="pov-detachment-mask"></div>
@@ -316,8 +356,8 @@
             </div>
             
             <div class="glass-panel control-block" style="gap:10px;">
-                <button class="btn btn-primary" onclick="window.zoomToMacula()" aria-label="Inspect Micro Photoreceptors">🔍 Inspect Photoreceptors</button>
-                <button class="btn" onclick="window.resetCamera()" aria-label="Reset Global View">Reset Global View</button>
+                <button class="btn btn-primary" onclick="window.zoomToMacula()" aria-label="Inspect Micro Photoreceptors">🔍 Zoom into Retina</button>
+                <button class="btn" onclick="window.resetCamera()" aria-label="Reset Global View">Reset View</button>
                 <button class="btn btn-explore" onclick="window.open('explorer.html','_blank')" aria-label="Journey Inside the Eye">🔬 Journey Inside the Eye →</button>
             </div>
         </div>
@@ -325,7 +365,7 @@
 
     <!-- Tour Overlay Bottom Right -->
     <div id="tour-dock" class="glass-panel">
-        <button id="btn-tour" class="tour-button" aria-label="Start Cinematic Tour">🎬 Start Cinematic Narrative</button>
+        <button id="btn-tour" class="tour-button" aria-label="Start Cinematic Tour">🎬 Start Guided Tour</button>
     </div>
     <div id="subtitles-box" aria-live="assertive"></div>
 
@@ -350,9 +390,7 @@
             document.getElementById(id).classList.toggle('open');
         }
         
-        let isLightMode = true; // Default to Light Mode for presentation
-        document.body.classList.add('light-mode');
-        
+        let isLightMode = false;
         document.getElementById('btn-theme').addEventListener('click', () => {
             isLightMode = !isLightMode;
             document.body.classList.toggle('light-mode', isLightMode);
@@ -380,36 +418,35 @@
         }
 
         function createTexture(type) {
-            const size = 512; const c = document.createElement('canvas'); c.width=size; c.height=size; const ctx = c.getContext('2d');
+            const size = 256; const c = document.createElement('canvas'); c.width=size; c.height=size; const ctx = c.getContext('2d');
             if (type === 'choroid') {
-                ctx.fillStyle = '#2a0208'; ctx.fillRect(0,0,size,size);
-                for(let i=0; i<15; i++) drawVeins(ctx, Math.random()*size, Math.random()*size, Math.random()*Math.PI*2, 4, 60, 8, 'rgba(120, 15, 30, 0.5)');
+                ctx.fillStyle = '#311318'; ctx.fillRect(0,0,size,size);
+                for(let i=0; i<10; i++) drawVeins(ctx, Math.random()*size, Math.random()*size, Math.random()*Math.PI*2, 3, 34, 5, 'rgba(112, 42, 52, 0.38)');
             } else if (type === 'retina') {
-                ctx.fillStyle = '#bf5464'; ctx.fillRect(0,0,size,size);
-                let g = ctx.createRadialGradient(size/2, size/2, 40, size/2, size/2, 250);
-                g.addColorStop(0, 'rgba(30,0,5,0.4)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = '#b16468'; ctx.fillRect(0,0,size,size);
+                let g = ctx.createRadialGradient(size/2, size/2, 20, size/2, size/2, 130);
+                g.addColorStop(0, 'rgba(32,6,8,0.3)'); g.addColorStop(1, 'rgba(0,0,0,0)');
                 ctx.fillStyle = g; ctx.fillRect(0,0,size,size);
-                const ox = size/2-100, oy = size/2+40;
-                ctx.fillStyle = '#fce7b6'; ctx.beginPath(); ctx.arc(ox, oy, 40, 0, Math.PI*2); ctx.fill();
-                for(let i=0; i<8; i++) {
+                const ox = size/2-52, oy = size/2+20;
+                ctx.fillStyle = '#f1d8a8'; ctx.beginPath(); ctx.arc(ox, oy, 18, 0, Math.PI*2); ctx.fill();
+                for(let i=0; i<6; i++) {
                     const ang = Math.random()*Math.PI*2;
-                    drawVeins(ctx, ox, oy, ang, 3, 100, 5, 'rgba(200, 30, 30, 0.8)');
-                    drawVeins(ctx, ox, oy, ang+0.1, 3, 100, 8, 'rgba(100, 10, 20, 0.8)');
+                    drawVeins(ctx, ox, oy, ang, 3, 48, 3, 'rgba(188, 48, 46, 0.8)');
+                    drawVeins(ctx, ox, oy, ang+0.08, 3, 52, 4, 'rgba(108, 18, 22, 0.62)');
                 }
             } else if (type === 'iris') {
-                c.width=512; c.height=512;
-                let gr = ctx.createRadialGradient(256,256, 40, 256,256, 250);
-                gr.addColorStop(0, '#000'); gr.addColorStop(0.2, '#0f766e'); gr.addColorStop(0.8, '#14b8a6'); gr.addColorStop(1, '#042f2e');
-                ctx.fillStyle = gr; ctx.fillRect(0,0,512,512);
+                let gr = ctx.createRadialGradient(size/2, size/2, 18, size/2, size/2, 120);
+                gr.addColorStop(0, '#16120d'); gr.addColorStop(0.22, '#53635c'); gr.addColorStop(0.72, '#778777'); gr.addColorStop(1, '#29322e');
+                ctx.fillStyle = gr; ctx.fillRect(0,0,size,size);
                 for(let a=0; a<Math.PI*2; a+=0.05) {
-                    ctx.strokeStyle = `rgba(167, 243, 208, ${Math.random()*0.4})`; ctx.lineWidth = Math.random()*3+1;
-                    ctx.beginPath(); ctx.moveTo(256 + Math.cos(a)*50, 256 + Math.sin(a)*50);
-                    ctx.bezierCurveTo( 256+Math.cos(a)*100, 256+Math.sin(a)*100, 256+Math.cos(a-0.2)*150, 256+Math.sin(a-0.2)*150, 256+Math.cos(a)*250, 256+Math.sin(a)*250 );
+                    ctx.strokeStyle = `rgba(229, 214, 185, ${0.08 + Math.random()*0.18})`; ctx.lineWidth = Math.random()*1.6+0.4;
+                    ctx.beginPath(); ctx.moveTo(size/2 + Math.cos(a)*24, size/2 + Math.sin(a)*24);
+                    ctx.bezierCurveTo( size/2+Math.cos(a)*46, size/2+Math.sin(a)*46, size/2+Math.cos(a-0.2)*72, size/2+Math.sin(a-0.2)*72, size/2+Math.cos(a)*120, size/2+Math.sin(a)*120 );
                     ctx.stroke();
                 }
             } else if (type === 'sclera') {
-                ctx.fillStyle = '#f8fafc'; ctx.fillRect(0,0,size,size);
-                for(let i=0; i<10; i++) drawVeins(ctx, Math.random()*size, Math.random()*size, Math.random()*Math.PI*2, 2, 30, 2, 'rgba(239,68,68,0.1)');
+                ctx.fillStyle = '#f3f2ec'; ctx.fillRect(0,0,size,size);
+                for(let i=0; i<8; i++) drawVeins(ctx, Math.random()*size, Math.random()*size, Math.random()*Math.PI*2, 2, 22, 1.5, 'rgba(182, 64, 70, 0.09)');
             }
             return new THREE.CanvasTexture(c);
         }
@@ -426,15 +463,24 @@
         const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight); 
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.05;
         renderer.localClippingEnabled = true;
         container.appendChild(renderer.domElement);
+        Object.values(tex).forEach(texture => {
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+        });
         
         const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.dampingFactor = 0.05;
+        controls.minDistance = 7;
+        controls.maxDistance = 42;
 
         scene.add(new THREE.AmbientLight(0xffffff, 0.3));
         const dir = new THREE.DirectionalLight(0xffffff, 1.2); dir.position.set(-10, 25, 10); scene.add(dir);
         // Spotlight for dramatic tour lighting
-        const spotLight = new THREE.SpotLight(0x38bdf8, 0, 30, Math.PI/6, 0.5); spotLight.position.set(-5, 5, 10); scene.add(spotLight);
+        const spotLight = new THREE.SpotLight(0x38bdf8, 0, 30, Math.PI/6, 0.5); spotLight.position.set(-5, 5, 10); scene.add(spotLight); scene.add(spotLight.target);
 
         // Eye Chart Shader
         function createEyeChartTex() {
@@ -482,76 +528,276 @@
         // ==========================================
         // 3. EYE 3D MODEL
         // ==========================================
-        const EYE_RAD = 6.0; const CORN_Z = EYE_RAD - 1.5; const SEG = 36;
-        const cutPlane = new THREE.Plane(new THREE.Vector3(1, -0.3, 0).normalize(), 0); 
-        
+        const EYE_RAD = 6.0; const CORN_Z = EYE_RAD - 1.55; const SEG = 28;
+        const cutPlane = new THREE.Plane(new THREE.Vector3(1, -0.3, 0).normalize(), 0);
+        const focusHighlight = new THREE.Color(0x4dc9ff);
+        const dimColor = new THREE.Color(0x0b1120);
+
+        function createBiconvexLensGeometry(radius = 2.05, thickness = 1.46, radialSegments = 28) {
+            const profile = [];
+            const steps = 18;
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                const y = -thickness / 2 + t * thickness;
+                const curve = Math.pow(Math.sin(t * Math.PI), 0.86);
+                profile.push(new THREE.Vector2(Math.max(0.02, curve * radius), y));
+            }
+            const geo = new THREE.LatheGeometry(profile, radialSegments);
+            geo.rotateX(Math.PI / 2);
+            return geo;
+        }
+
+        function createIrisGeometry(innerRadius = 1.06, outerRadius = 3.18, depth = 0.28) {
+            const shape = new THREE.Shape();
+            shape.absarc(0, 0, outerRadius, 0, Math.PI * 2, false);
+            const hole = new THREE.Path();
+            hole.absarc(0, 0, innerRadius, 0, Math.PI * 2, true);
+            shape.holes.push(hole);
+            const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false, curveSegments: 28, steps: 1 });
+            geo.translate(0, 0, -depth / 2);
+            return geo;
+        }
+
+        function buildPhotoreceptors(rodCount, coneCount) {
+            const group = new THREE.Group();
+            const rods = new THREE.InstancedMesh(
+                new THREE.CylinderGeometry(0.014, 0.018, 0.18, 4).translate(0, 0.09, 0),
+                new THREE.MeshStandardMaterial({ color: 0x4692b8, roughness: 0.4, clippingPlanes: [cutPlane] }),
+                rodCount
+            );
+            const cones = new THREE.InstancedMesh(
+                new THREE.ConeGeometry(0.024, 0.15, 5).translate(0, 0.075, 0),
+                new THREE.MeshStandardMaterial({ color: 0xe5b85a, roughness: 0.35, clippingPlanes: [cutPlane] }),
+                coneCount
+            );
+            const matrix = new THREE.Matrix4();
+            const quat = new THREE.Quaternion();
+            const up = new THREE.Vector3(0, 1, 0);
+            const dir = new THREE.Vector3();
+            for (let i = 0; i < rodCount + coneCount; i++) {
+                const seed = i / Math.max(1, rodCount + coneCount - 1);
+                const ang = seed * Math.PI * 13.0;
+                const radius = Math.sqrt(Math.random()) * 0.74;
+                const px = Math.cos(ang) * radius;
+                const py = Math.sin(ang) * radius;
+                dir.set(px * 0.22, py * 0.22, 1).normalize();
+                quat.setFromUnitVectors(up, dir);
+                matrix.makeRotationFromQuaternion(quat);
+                matrix.setPosition(px, py, 0);
+                if (i < rodCount) rods.setMatrixAt(i, matrix);
+                else cones.setMatrixAt(i - rodCount, matrix);
+            }
+            rods.instanceMatrix.needsUpdate = true;
+            cones.instanceMatrix.needsUpdate = true;
+            group.add(rods);
+            group.add(cones);
+            return group;
+        }
+
         const mainGrp = new THREE.Group(); scene.add(mainGrp);
         const postGrp = new THREE.Group(); const antGrp = new THREE.Group();
         mainGrp.add(postGrp); mainGrp.add(antGrp);
 
-        const mSclera = new THREE.MeshPhysicalMaterial({ color: 0xffffff, map: tex.sclera, roughness: 0.3, clearcoat: 0.5, side: THREE.DoubleSide, clippingPlanes: [cutPlane] });
-        postGrp.add(new THREE.Mesh(new THREE.SphereGeometry(EYE_RAD+0.1, SEG, SEG), mSclera));
-        
-        const mChoroid = new THREE.MeshStandardMaterial({ color: 0x3b000b, map: tex.choroid, roughness: 0.8, side: THREE.DoubleSide, clippingPlanes: [cutPlane] });
-        postGrp.add(new THREE.Mesh(new THREE.SphereGeometry(EYE_RAD, SEG, SEG), mChoroid));
+        const mSclera = new THREE.MeshPhysicalMaterial({
+            color: 0xf2efe8, map: tex.sclera, roughness: 0.58, clearcoat: 0.2, sheen: 0.15,
+            side: THREE.DoubleSide, clippingPlanes: [cutPlane]
+        });
+        const scleraMesh = new THREE.Mesh(new THREE.SphereGeometry(EYE_RAD + 0.12, SEG, SEG), mSclera);
+        postGrp.add(scleraMesh);
 
-        const retinaGeo = new THREE.SphereGeometry(EYE_RAD-0.05, SEG, SEG); const retinaPosArr = retinaGeo.attributes.position.array.slice(); 
-        const mRetina = new THREE.MeshPhysicalMaterial({ color: 0xdb2777, map: tex.retina, roughness: 0.6, clearcoat: 0.3, side: THREE.BackSide, clippingPlanes: [cutPlane] });
-        const retinaMesh = new THREE.Mesh(retinaGeo, mRetina); postGrp.add(retinaMesh);
+        const mChoroid = new THREE.MeshStandardMaterial({
+            color: 0x4a2127, map: tex.choroid, roughness: 0.92, side: THREE.DoubleSide, clippingPlanes: [cutPlane]
+        });
+        const choroidMesh = new THREE.Mesh(new THREE.SphereGeometry(EYE_RAD - 0.02, SEG, SEG), mChoroid);
+        postGrp.add(choroidMesh);
 
-        // Optic Nerve Bundle
-        const nerveBundleGrp = new THREE.Group(); 
-        const mNerve = new THREE.MeshStandardMaterial({ color: 0xfce7b6, roughness: 0.8, clippingPlanes: [cutPlane], transparent: true, opacity: 1.0 });
+        const retinaGeo = new THREE.SphereGeometry(EYE_RAD - 0.14, SEG, SEG);
+        const retinaPosArr = Float32Array.from(retinaGeo.attributes.position.array);
+        const mRetina = new THREE.MeshPhysicalMaterial({
+            color: 0xcb7d77, map: tex.retina, roughness: 0.68, clearcoat: 0.08, sheen: 0.28,
+            side: THREE.BackSide, clippingPlanes: [cutPlane]
+        });
+        const retinaMesh = new THREE.Mesh(retinaGeo, mRetina);
+        postGrp.add(retinaMesh);
+
+        const opticNerveSheath = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.95, 1.08, 4.4, 18),
+            new THREE.MeshStandardMaterial({ color: 0xdcc9aa, roughness: 0.82, clippingPlanes: [cutPlane] })
+        );
+        opticNerveSheath.rotation.x = Math.PI / 2;
+        opticNerveSheath.position.set(1.18, -0.55, -EYE_RAD - 2.05);
+        postGrp.add(opticNerveSheath);
+
+        const nerveBundleGrp = new THREE.Group();
+        const mNerve = new THREE.MeshStandardMaterial({
+            color: 0xf1dfbb, roughness: 0.76, clippingPlanes: [cutPlane], transparent: true, opacity: 1.0
+        });
         const nerveFibers = [];
-        for(let i=0; i<18; i++) {
-            const rx = (Math.random()-0.5)*1.2, ry = (Math.random()-0.5)*1.2;
-            const rGeo = new THREE.CylinderGeometry(0.06, 0.06, 4, 6); rGeo.translate(rx, -2, ry); 
-            const fMesh = new THREE.Mesh(rGeo, mNerve.clone());
-            nerveBundleGrp.add(fMesh); nerveFibers.push(fMesh);
+        for (let i = 0; i < 14; i++) {
+            const rx = (Math.random() - 0.5) * 0.92;
+            const ry = (Math.random() - 0.5) * 0.92;
+            const rGeo = new THREE.CylinderGeometry(0.05, 0.05, 4.1, 5);
+            rGeo.rotateX(Math.PI / 2);
+            rGeo.translate(rx, ry, -2.0);
+            const fiber = new THREE.Mesh(rGeo, mNerve.clone());
+            nerveBundleGrp.add(fiber);
+            nerveFibers.push(fiber);
         }
-        const opticDisc = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.4, 1.6), mNerve); opticDisc.position.set(0, 0, 0); nerveBundleGrp.add(opticDisc);
-        nerveBundleGrp.rotation.x = Math.PI/2; nerveBundleGrp.position.set(1.2, -0.6, -EYE_RAD); postGrp.add(nerveBundleGrp);
+        nerveBundleGrp.position.set(1.18, -0.55, -EYE_RAD - 0.06);
+        postGrp.add(nerveBundleGrp);
 
-        // Cornea
-        const cornea = new THREE.Mesh(new THREE.SphereGeometry(4.0, SEG, SEG, 0, Math.PI*2, 0, Math.PI/3), new THREE.MeshPhysicalMaterial({
-            color: 0xffffff, transparent: true, opacity: 0.15, transmission: 0.99, roughness: 0.05, ior: 1.376, thickness: 0.6, side: THREE.DoubleSide, clearcoat: 1.0, clippingPlanes: [cutPlane]
+        const opticDiscBaseZ = -EYE_RAD + 0.16;
+        const opticDisc = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.78, 0.88, 0.18, 20),
+            new THREE.MeshStandardMaterial({ color: 0xf0dcad, roughness: 0.7, clippingPlanes: [cutPlane] })
+        );
+        opticDisc.rotation.x = Math.PI / 2;
+        opticDisc.position.set(1.18, -0.55, opticDiscBaseZ);
+        postGrp.add(opticDisc);
+
+        const cornea = new THREE.Mesh(new THREE.SphereGeometry(4.0, 24, 20, 0, Math.PI * 2, 0, Math.PI / 2.6), new THREE.MeshPhysicalMaterial({
+            color: 0xf7fbff, transparent: true, opacity: 0.24, transmission: 0.98, roughness: 0.03, ior: 1.376,
+            thickness: 0.55, attenuationColor: new THREE.Color(0xd4ecff), attenuationDistance: 12,
+            side: THREE.DoubleSide, clearcoat: 1.0, clippingPlanes: [cutPlane]
         }));
-        cornea.rotation.x = Math.PI/2; cornea.position.z = CORN_Z; antGrp.add(cornea);
+        cornea.rotation.x = Math.PI / 2; cornea.position.z = CORN_Z; antGrp.add(cornea);
 
-        // Crystalline Lens
-        const lensM = new THREE.Mesh(new THREE.SphereGeometry(2.4, SEG, SEG), new THREE.MeshPhysicalMaterial({
-            color: 0xf8fafc, transparent: true, opacity: 0.6, transmission: 0.95, roughness: 0.0, ior: 1.406, clearcoat: 1.0, side: THREE.DoubleSide, clippingPlanes: [cutPlane]
+        const irisMesh = new THREE.Mesh(
+            createIrisGeometry(),
+            new THREE.MeshStandardMaterial({ map: tex.iris, roughness: 0.82, metalness: 0.02, side: THREE.DoubleSide, clippingPlanes: [cutPlane] })
+        );
+        irisMesh.position.z = CORN_Z - 1.2;
+        antGrp.add(irisMesh);
+
+        const pupilMesh = new THREE.Mesh(
+            new THREE.CylinderGeometry(1.0, 1.02, 0.18, 28),
+            new THREE.MeshBasicMaterial({ color: 0x05070a, clippingPlanes: [cutPlane] })
+        );
+        pupilMesh.rotation.x = Math.PI / 2;
+        pupilMesh.position.z = irisMesh.position.z - 0.02;
+        antGrp.add(pupilMesh);
+
+        const lensM = new THREE.Mesh(createBiconvexLensGeometry(), new THREE.MeshPhysicalMaterial({
+            color: 0xf6eddc, transparent: true, opacity: 0.56, transmission: 0.93, roughness: 0.03, ior: 1.406,
+            thickness: 0.9, side: THREE.DoubleSide, clearcoat: 0.9, attenuationColor: new THREE.Color(0xfff4da),
+            attenuationDistance: 10, clippingPlanes: [cutPlane]
         }));
-        lensM.position.z = CORN_Z - 0.5; antGrp.add(lensM);
+        lensM.position.z = CORN_Z - 2.55;
+        lensM.scale.set(1.04, 1.04, 0.92);
+        antGrp.add(lensM);
 
-        // Iris
-        let irisGeo = new THREE.RingGeometry(1.2, 3.4, SEG);
-        const irisMesh = new THREE.Mesh(irisGeo, new THREE.MeshStandardMaterial({map: tex.iris, roughness: 0.5, side: THREE.DoubleSide, clippingPlanes: [cutPlane]}));
-        irisMesh.position.z = CORN_Z + 0.1; antGrp.add(irisMesh);
+        const ciliary = new THREE.Mesh(
+            new THREE.TorusGeometry(3.28, 0.36, 14, 30),
+            new THREE.MeshStandardMaterial({ color: 0x6f3b41, roughness: 0.88, clippingPlanes: [cutPlane], side: THREE.DoubleSide })
+        );
+        ciliary.position.z = lensM.position.z - 0.05;
+        antGrp.add(ciliary);
 
-        // Ciliary Body
-        const ciliary = new THREE.Mesh(new THREE.TorusGeometry(3.6, 0.4, 16, SEG), new THREE.MeshStandardMaterial({color: 0x7f1d1d, clippingPlanes: [cutPlane], side: THREE.DoubleSide}));
-        ciliary.position.z = CORN_Z - 0.5; antGrp.add(ciliary);
+        const microGrp = new THREE.LOD();
+        const microHigh = buildPhotoreceptors(520, 180);
+        const microLow = new THREE.Group();
+        const microDisc = new THREE.Mesh(
+            new THREE.CircleGeometry(0.82, 18),
+            new THREE.MeshBasicMaterial({ color: 0x5f8ea8, transparent: true, opacity: 0.34, side: THREE.DoubleSide, clippingPlanes: [cutPlane] })
+        );
+        const foveaDisc = new THREE.Mesh(
+            new THREE.CircleGeometry(0.18, 14),
+            new THREE.MeshBasicMaterial({ color: 0xf5d27e, transparent: true, opacity: 0.8, side: THREE.DoubleSide, clippingPlanes: [cutPlane] })
+        );
+        foveaDisc.position.z = 0.002;
+        microLow.add(microDisc);
+        microLow.add(foveaDisc);
+        microGrp.addLevel(microHigh, 0);
+        microGrp.addLevel(microLow, 5.5);
+        microGrp.position.set(0, 0, -EYE_RAD + 0.16);
+        microGrp.rotation.y = Math.PI;
+        postGrp.add(microGrp);
 
-        // Photoreceptors (Micro)
-        const microGrp = new THREE.Group(); microGrp.position.set(0, 0, -EYE_RAD); microGrp.rotation.y = Math.PI;
-        const rI = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.015, 0.015, 0.18, 4).translate(0,0.09,0), new THREE.MeshStandardMaterial({color: 0x38bdf8, clippingPlanes:[cutPlane]}), 800);
-        const cI = new THREE.InstancedMesh(new THREE.ConeGeometry(0.02, 0.15, 4).translate(0,0.075,0), new THREE.MeshStandardMaterial({color: 0xfbbf24, clippingPlanes:[cutPlane]}), 300);
-        const matM = new THREE.Matrix4(), vecV = new THREE.Vector3(); let rc=0, cc=0;
-        for(let i=0; i<1200; i++) {
-            vecV.set(Math.cos(i)*Math.sqrt(Math.random())*0.7, Math.sin(i)*Math.sqrt(Math.random())*0.7, 0); matM.makeRotationFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0), new THREE.Vector3(vecV.x,vecV.y,4).normalize())); matM.setPosition(vecV);
-            if(Math.random()>0.25 && rc<800) rI.setMatrixAt(rc++, matM); else if(cc<300) cI.setMatrixAt(cc++, matM);
+        const corrLens = new THREE.Mesh(
+            createBiconvexLensGeometry(4.0, 0.42, 24),
+            new THREE.MeshPhysicalMaterial({
+                color: 0xc2dfff, transparent: true, opacity: 0.28, transmission: 0.9, roughness: 0.04, ior: 1.5,
+                thickness: 0.3, clippingPlanes: [cutPlane]
+            })
+        );
+        corrLens.position.z = CORN_Z + 4.95;
+        corrLens.visible = false;
+        antGrp.add(corrLens);
+
+        const anatomyParts = new Map();
+        function preparePartMaterials(target) {
+            target.traverse(obj => {
+                if (!obj.isMesh) return;
+                const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+                materials.forEach(material => {
+                    if (material.userData.focusReady) return;
+                    material.userData.focusReady = true;
+                    material.userData.baseColor = material.color ? material.color.clone() : null;
+                    material.userData.baseEmissive = material.emissive ? material.emissive.clone() : null;
+                    material.userData.baseEmissiveIntensity = material.emissiveIntensity ?? 1;
+                });
+            });
         }
-        microGrp.add(rI); microGrp.add(cI); postGrp.add(microGrp);
 
-        // Corrective Lens
-        const corrLens = new THREE.Mesh(new THREE.CylinderGeometry(4,4,0.4,SEG), new THREE.MeshPhysicalMaterial({color: 0x93c5fd, transparent: true, opacity: 0.3, transmission: 0.9, ior: 1.5, clippingPlanes: [cutPlane]}));
-        corrLens.rotation.x = Math.PI/2; corrLens.position.z = CORN_Z + 5.0; corrLens.visible = false; antGrp.add(corrLens);
+        function registerAnatomyPart(key, target) {
+            preparePartMaterials(target);
+            const meshes = [];
+            target.traverse(obj => { if (obj.isMesh) meshes.push(obj); });
+            anatomyParts.set(key, { key, meshes });
+        }
+
+        let activePartKey = null;
+        function syncPartFocus() {
+            const hasActive = !!activePartKey;
+            anatomyParts.forEach((part, key) => {
+                const isActive = key === activePartKey;
+                part.meshes.forEach(mesh => {
+                    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+                    materials.forEach(material => {
+                        if (material.userData.baseColor) {
+                            material.color.copy(material.userData.baseColor);
+                            if (hasActive && !isActive) material.color.lerp(dimColor, 0.42);
+                            if (hasActive && isActive) material.color.lerp(new THREE.Color(0xffffff), 0.06);
+                        }
+                        if (material.emissive) {
+                            material.emissive.copy(material.userData.baseEmissive || new THREE.Color(0x000000));
+                            material.emissiveIntensity = material.userData.baseEmissiveIntensity ?? 1;
+                            if (isActive) {
+                                material.emissive.lerp(focusHighlight, 0.6);
+                                material.emissiveIntensity = 0.24;
+                            } else if (hasActive) {
+                                material.emissive.multiplyScalar(0.2);
+                                material.emissiveIntensity = Math.min(0.12, material.emissiveIntensity);
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        function setActivePart(key) {
+            if (activePartKey === key) return;
+            activePartKey = key;
+            syncPartFocus();
+        }
+
+        registerAnatomyPart('cornea', cornea);
+        registerAnatomyPart('iris', irisMesh);
+        registerAnatomyPart('lens', lensM);
+        registerAnatomyPart('ciliary', ciliary);
+        registerAnatomyPart('sclera', scleraMesh);
+        registerAnatomyPart('choroid', choroidMesh);
+        registerAnatomyPart('retina', retinaMesh);
+        registerAnatomyPart('optic-nerve', opticNerveSheath);
+        preparePartMaterials(nerveBundleGrp);
+        preparePartMaterials(opticDisc);
+        anatomyParts.get('optic-nerve').meshes.push(opticDisc, ...nerveFibers);
 
         // Light Rays
-        const rays = new THREE.Group(); mainGrp.add(rays); const rl = []; const rMat = new THREE.LineBasicMaterial({color: 0xef4444, transparent:true, opacity:0.8, linewidth:3});
-        for(let i=0; i<5; i++) { const l = new THREE.Line(new THREE.BufferGeometry(), rMat); rays.add(l); rl.push(l); }
-        const fPoint = new THREE.Mesh(new THREE.SphereGeometry(0.2,16,16), new THREE.MeshBasicMaterial({color:0xef4444})); rays.add(fPoint);
+        const rays = new THREE.Group(); mainGrp.add(rays); const rl = [];
+        const rMat = new THREE.LineBasicMaterial({ color: 0xef5350, transparent: true, opacity: 0.8 });
+        for (let i = 0; i < 5; i++) { const l = new THREE.Line(new THREE.BufferGeometry(), rMat); rays.add(l); rl.push(l); }
+        const fPoint = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 12), new THREE.MeshBasicMaterial({ color: 0xef5350 })); rays.add(fPoint);
 
         // ==========================================
         // 4. PATHOLOGY ANIMATION MESHES
@@ -568,8 +814,8 @@
 
         // Glaucoma pressure glow at optic disc
         const glauGlowMat = new THREE.MeshBasicMaterial({ color: 0xff4444, transparent: true, opacity: 0 });
-        const glauGlow = new THREE.Mesh(new THREE.SphereGeometry(1.0, 16, 16), glauGlowMat);
-        glauGlow.position.set(1.2, -0.6, -EYE_RAD); glauGlow.visible = false; postGrp.add(glauGlow);
+        const glauGlow = new THREE.Mesh(new THREE.SphereGeometry(0.9, 14, 14), glauGlowMat);
+        glauGlow.position.set(1.18, -0.55, opticDiscBaseZ); glauGlow.visible = false; postGrp.add(glauGlow);
 
         // --- RETINAL DETACHMENT: Vitreous traction fibers ---
         const tractionGrp = new THREE.Group(); postGrp.add(tractionGrp);
@@ -606,6 +852,8 @@
         // ==========================================
         const glauAnim = { progress: 0, target: 0 };
         const detAnim = { progress: 0, target: 0 };
+        let retinaMorphProgress = -1;
+        let retinaNormalProgress = -1;
         const ANIM_SPEED = 0.008; // Smooth transition speed
 
         function updateGlaucomaAnimation() {
@@ -627,7 +875,7 @@
             aqueousMesh.scale.set(1 + p1 * 0.15, 0.6 + p1 * 0.1, 0.5 + p1 * 0.1);
 
             // Phase 2: Optic disc cupping (depression)
-            opticDisc.position.z = -p2 * 0.8;
+            opticDisc.position.z = opticDiscBaseZ - p2 * 0.52;
             glauGlow.visible = p2 > 0.01;
             glauGlowMat.opacity = p2 * 0.35;
 
@@ -675,25 +923,31 @@
             }
 
             // Phase 3: Progressive retinal peeling
-            const pos = retinaMesh.geometry.attributes.position;
-            const detachAmount = p3 * 1.8;
-            for (let i = 0; i < pos.count; i++) {
-                let ox = retinaPosArr[i*3], oy = retinaPosArr[i*3+1], oz = retinaPosArr[i*3+2];
-                if (oy > 0) {
-                    // Peel from top, spreading downward based on progress
-                    const yNorm = oy / EYE_RAD;
-                    const peelThreshold = 0.3 + p3 * 0.7; // Peeling spreads from top
-                    if (yNorm > (1 - peelThreshold)) {
-                        const peelStrength = (yNorm - (1 - peelThreshold)) / peelThreshold;
-                        const sag = peelStrength * detachAmount;
-                        oy -= sag * 0.4;
-                        oz += sag * 0.3; // Billows inward
-                        ox += sag * 0.15 * Math.sin(i * 0.3); // Slight waviness
+            if (Math.abs(p3 - retinaMorphProgress) > 0.015 || (p3 === 0 && retinaMorphProgress !== 0) || (p3 === 1 && retinaMorphProgress !== 1)) {
+                const pos = retinaMesh.geometry.attributes.position;
+                const detachAmount = p3 * 1.7;
+                for (let i = 0; i < pos.count; i++) {
+                    let ox = retinaPosArr[i * 3], oy = retinaPosArr[i * 3 + 1], oz = retinaPosArr[i * 3 + 2];
+                    if (oy > 0) {
+                        const yNorm = oy / EYE_RAD;
+                        const peelThreshold = 0.32 + p3 * 0.68;
+                        if (yNorm > (1 - peelThreshold)) {
+                            const peelStrength = (yNorm - (1 - peelThreshold)) / peelThreshold;
+                            const sag = peelStrength * detachAmount;
+                            oy -= sag * 0.34;
+                            oz += sag * 0.34;
+                            ox += sag * 0.12 * Math.sin(i * 0.28);
+                        }
                     }
+                    pos.setXYZ(i, ox, oy, oz);
                 }
-                pos.setXYZ(i, ox, oy, oz);
+                pos.needsUpdate = true;
+                retinaMorphProgress = p3;
+                if (Math.abs(p3 - retinaNormalProgress) > 0.05 || p3 === 0 || p3 === 1) {
+                    retinaMesh.geometry.computeVertexNormals();
+                    retinaNormalProgress = p3;
+                }
             }
-            pos.needsUpdate = true; retinaMesh.geometry.computeVertexNormals();
 
             // Sub-retinal fluid
             subRetFluid.visible = p3 > 0.1;
@@ -714,24 +968,43 @@
         const S = { myop: 0.0, lens: false, glau: false, det: false, diag: false, pupil: 0.5, accomm: 0.0 };
 
         function applyState() {
-            postGrp.scale.set(1, 1, 1 + (S.myop * 0.35)); corrLens.visible = S.lens;
-            const szZ = -EYE_RAD * (1 + S.myop * 0.35); const acZ = S.lens ? szZ : -EYE_RAD - (S.accomm*1.5); 
-            fPoint.position.set(0, 0, acZ);
+            const axialScale = 1 + (S.myop * 0.28);
+            const retinaZ = -(EYE_RAD - 0.16) * axialScale;
+            const focusUncorrectedZ = -EYE_RAD + 0.12 - (S.accomm * 1.25);
+            const focusCorrectedZ = THREE.MathUtils.lerp(focusUncorrectedZ, retinaZ, 0.96);
+            const focusZ = S.lens ? focusCorrectedZ : focusUncorrectedZ;
+            const lensMidCompression = THREE.MathUtils.lerp(0.66, 0.5, S.accomm);
+            const lensExitCompression = THREE.MathUtils.lerp(0.34, 0.14, S.accomm);
 
-            for(let i=0; i<5; i++) {
-                const y = ((i/4)*2-1) * 2.2; const p = []; p.push(new THREE.Vector3(0, y, 40)); let cy = y;
-                if(S.lens && S.myop > 0) { p.push(new THREE.Vector3(0, cy, corrLens.position.z)); cy *= (1 + S.myop * 0.15); }
-                p.push(new THREE.Vector3(0, cy, CORN_Z+1)); p.push(new THREE.Vector3(0, cy*0.8, lensM.position.z)); p.push(new THREE.Vector3(0, 0, acZ));
-                if(!S.lens && S.myop > 0 && acZ > szZ) p.push(new THREE.Vector3(0, -(cy*0.8)*(szZ-acZ)/Math.abs(acZ-lensM.position.z) , szZ));
-                rl[i].geometry.setFromPoints(p);
+            postGrp.scale.set(1, 1, axialScale);
+            corrLens.visible = S.lens;
+            corrLens.scale.set(1 + S.myop * 0.04, 1 + S.myop * 0.04, 1);
+            fPoint.position.set(0, 0, focusZ);
+
+            for (let i = 0; i < 5; i++) {
+                const y = ((i / 4) * 2 - 1) * 2.15;
+                const points = [new THREE.Vector3(0, y, 40)];
+                if (S.lens && S.myop > 0.02) points.push(new THREE.Vector3(0, y * 0.94, corrLens.position.z + 0.15));
+                points.push(new THREE.Vector3(0, y * 0.82, CORN_Z + 1.55));
+                points.push(new THREE.Vector3(0, y * 0.63, CORN_Z + 0.35));
+                points.push(new THREE.Vector3(0, y * (lensMidCompression - S.myop * 0.05), irisMesh.position.z - 0.22));
+                points.push(new THREE.Vector3(0, y * (lensExitCompression - S.myop * 0.08), lensM.position.z + 0.52));
+                points.push(new THREE.Vector3(0, 0, focusZ));
+                if (!S.lens && focusZ > retinaZ) {
+                    const divergence = (focusZ - retinaZ) / Math.max(1, Math.abs(retinaZ - lensM.position.z));
+                    points.push(new THREE.Vector3(0, -y * 0.22 * divergence, retinaZ));
+                }
+                rl[i].geometry.setFromPoints(points);
             }
-            povCam.position.set(0, 0, szZ + 0.5); povCam.lookAt(0,0,100);
-            
-            let vBlur = Math.max(0, (szZ - acZ) * -2);
-            bUnifs.bAmt.value = vBlur; document.getElementById('pov-canvas-wrapper').style.filter = `blur(${vBlur}px)`;
+            povCam.position.set(0, 0, retinaZ + 0.5); povCam.lookAt(0, 0, 100);
 
-            lensM.scale.set(1, 1, 0.45 + (S.accomm * 0.4));
-            irisMesh.geometry.dispose(); irisMesh.geometry = new THREE.RingGeometry(2.2 - (S.pupil * 1.7), 3.4, SEG);
+            const vBlur = Math.min(8, Math.abs(retinaZ - focusZ) * 1.55);
+            bUnifs.bAmt.value = Math.min(4.5, vBlur * 0.72);
+            document.getElementById('pov-canvas-wrapper').style.filter = `blur(${vBlur}px)`;
+
+            lensM.scale.set(1.04 - (S.accomm * 0.08), 1.04 - (S.accomm * 0.08), 0.92 + (S.accomm * 0.56));
+            const pupilScale = 0.58 + (S.pupil * 0.94);
+            pupilMesh.scale.set(pupilScale, pupilScale, 1);
 
             if(S.diag) { scene.overrideMaterial = diagMaterial; rays.visible = false; } else { scene.overrideMaterial = null; rays.visible = true; }
         }
@@ -877,7 +1150,7 @@
         function stopTour() {
             tourState.running = false;
             document.getElementById('btn-tour').classList.remove('active');
-            document.getElementById('btn-tour').innerText = '🎬 Start Cinematic Narrative';
+            document.getElementById('btn-tour').innerText = '🎬 Start Guided Tour';
             subBox.style.opacity = '0';
             setLetterbox(false);
             controls.enabled = true;
@@ -936,35 +1209,253 @@
         // 8. HOTSPOTS & ANNOTATIONS
         // ==========================================
         const anns = [
-            { id:'c', t:'Cornea', d:'Primary refractive lens surface.', g:antGrp, v:[-2.8, 2.5, CORN_Z+0.5] },
-            { id:'i', t:'Iris (Morphable)', d:'Constricts/dilates adjusting to the light environment.', g:antGrp, v:[-1.8, -1.5, CORN_Z-0.1] },
-            { id:'l', t:'Crystalline Lens', d:'Accommodates thickness via ciliary flexion for near focus.', g:antGrp, v:[-1.0, 1.0, CORN_Z-0.5] },
-            { id:'z', t:'Ciliary Body', d:'Smooth muscle ring acting upon zonular ligaments.', g:antGrp, v:[-2.5, -2.5, CORN_Z-0.5] },
-            { id:'s', t:'Sclera', d:'Tough opaque protective structure.', g:postGrp, v:[-4.5, 4.0, -1] },
-            { id:'v', t:'Choroid', d:'Procedural fractal vasculature supplying oxygen.', g:postGrp, v:[-3.5, 3.5, -3.5] },
-            { id:'r', t:'Neural Retina', d:'Dynamic layer vulnerable to physical tear detachment.', g:postGrp, v:[-2.0, -2.0, -5.0] },
-            { id:'n', t:'Optic Nerve', d:'Bundled neurological pathway susceptible to Glaucoma pressure cupping.', g:postGrp, v:[1.5, -0.5, -EYE_RAD-1.0] }
+            {
+                id: 'c', short: 'Cornea', title: 'Cornea', meta: 'Primary refractive dome',
+                d: 'The transparent cornea contributes most of the eye\'s focusing power before light ever reaches the lens.',
+                g: antGrp, anchor: [-2.2, 1.45, CORN_Z + 0.48], offset: [-1.05, 1.05, 0.4], part: 'cornea'
+            },
+            {
+                id: 'i', short: 'Iris', title: 'Iris + Pupil', meta: 'Dynamic aperture',
+                d: 'The iris is a muscular diaphragm. Its central opening, the pupil, expands in dim light and constricts in bright light.',
+                g: antGrp, anchor: [-1.72, -0.9, irisMesh.position.z], offset: [-1.1, -0.45, 0.35], part: 'iris'
+            },
+            {
+                id: 'l', short: 'Lens', title: 'Crystalline Lens', meta: 'Variable-focus optic',
+                d: 'This biconvex lens changes curvature during accommodation, shifting focus between near and distant targets.',
+                g: antGrp, anchor: [-0.9, 0.8, lensM.position.z + 0.08], offset: [-0.85, 0.95, 0.25], part: 'lens'
+            },
+            {
+                id: 'z', short: 'Ciliary Body', title: 'Ciliary Body', meta: 'Accommodation control',
+                d: 'Ciliary muscle tension changes the lens shape through the zonules, enabling the eye\'s autofocus behavior.',
+                g: antGrp, anchor: [-2.45, -1.6, ciliary.position.z], offset: [-1.0, -0.75, 0.18], part: 'ciliary'
+            },
+            {
+                id: 's', short: 'Sclera', title: 'Sclera', meta: 'Fibrous outer shell',
+                d: 'The sclera is the load-bearing coat of the globe, preserving shape and protecting internal tissues.',
+                g: postGrp, anchor: [-4.1, 2.7, 0.45], offset: [-1.1, 0.95, 0.15], part: 'sclera'
+            },
+            {
+                id: 'v', short: 'Choroid', title: 'Choroid', meta: 'Vascular support layer',
+                d: 'The choroid sits between sclera and retina, supplying oxygen and nutrients to the metabolically active outer retina.',
+                g: postGrp, anchor: [-3.15, 2.3, -2.3], offset: [-1.05, 0.88, -0.25], part: 'choroid'
+            },
+            {
+                id: 'r', short: 'Retina', title: 'Retina', meta: 'Neural sensing layer',
+                d: 'Photoreceptors line the inner back surface of the globe, converting focused light into signals for the brain.',
+                g: postGrp, anchor: [-2.12, -1.45, -4.8], offset: [-0.95, -0.9, -0.2], part: 'retina'
+            },
+            {
+                id: 'n', short: 'Optic Nerve', title: 'Optic Nerve', meta: 'Posterior exit pathway',
+                d: 'Ganglion cell axons converge at the optic disc and exit posteriorly as the optic nerve toward the brain.',
+                g: postGrp, anchor: [1.18, -0.55, opticDiscBaseZ - 0.06], offset: [1.35, -0.55, -1.1], part: 'optic-nerve'
+            }
         ];
-        const aLayer = document.getElementById('annotations-layer'); const aDoms = [];
+        const aLayer = document.getElementById('annotations-layer');
+        const aDoms = [];
+        const aMap = new Map();
+        const annotationProj = new THREE.Matrix4();
+        const annotationFrustum = new THREE.Frustum();
+        let hoveredAnnotationId = null;
+        let pinnedAnnotationId = null;
+        let clearHoverTimer = null;
+
+        function activeAnnotationId() {
+            return pinnedAnnotationId || hoveredAnnotationId;
+        }
+
+        function syncAnnotationActivity() {
+            const activeId = activeAnnotationId();
+            aDoms.forEach(a => {
+                const isActive = a.id === activeId;
+                a.marker.classList.toggle('is-active', isActive);
+                a.label.classList.toggle('is-active', isActive);
+            });
+            setActivePart(activeId ? aMap.get(activeId).part : null);
+        }
+
+        function queueHoverClear(id) {
+            if (pinnedAnnotationId === id) return;
+            if (clearHoverTimer) clearTimeout(clearHoverTimer);
+            clearHoverTimer = setTimeout(() => {
+                if (hoveredAnnotationId === id) {
+                    hoveredAnnotationId = null;
+                    syncAnnotationActivity();
+                }
+            }, 40);
+        }
+
+        function bindAnnotationEvents(node, id) {
+            node.addEventListener('mouseenter', () => {
+                if (clearHoverTimer) clearTimeout(clearHoverTimer);
+                hoveredAnnotationId = id;
+                syncAnnotationActivity();
+            });
+            node.addEventListener('mouseleave', () => queueHoverClear(id));
+            node.addEventListener('focus', () => {
+                if (clearHoverTimer) clearTimeout(clearHoverTimer);
+                hoveredAnnotationId = id;
+                syncAnnotationActivity();
+            });
+            node.addEventListener('blur', () => queueHoverClear(id));
+            node.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                pinnedAnnotationId = pinnedAnnotationId === id ? null : id;
+                hoveredAnnotationId = id;
+                syncAnnotationActivity();
+            });
+        }
+
+        function hideAnnotation(annotation) {
+            annotation.marker.classList.add('hotspot-hidden');
+            annotation.label.classList.add('hotspot-hidden');
+            annotation.line.classList.add('hotspot-hidden');
+        }
+
+        function resolveAnnotationCollisions(items, viewportWidth, viewportHeight) {
+            ['left', 'right'].forEach(side => {
+                const group = items.filter(item => item.side === side).sort((a, b) => a.labelY - b.labelY);
+                if (!group.length) return;
+                const topPad = 26;
+                let cursor = topPad;
+                group.forEach(item => {
+                    const halfW = item.width / 2;
+                    const halfH = item.height / 2;
+                    item.finalX = THREE.MathUtils.clamp(item.labelX, halfW + 18, viewportWidth - halfW - 18);
+                    item.finalY = THREE.MathUtils.clamp(item.labelY, halfH + topPad, viewportHeight - halfH - topPad);
+                    const top = item.finalY - halfH;
+                    if (top < cursor) item.finalY = cursor + halfH;
+                    cursor = item.finalY + halfH + 10;
+                });
+                const overflow = cursor - 10 - (viewportHeight - topPad);
+                if (overflow > 0) group.forEach(item => { item.finalY -= overflow; });
+                group.forEach(item => {
+                    item.finalY = THREE.MathUtils.clamp(item.finalY, item.height / 2 + topPad, viewportHeight - item.height / 2 - topPad);
+                });
+            });
+        }
+
         anns.forEach(a => {
-            const w=document.createElement('div'); w.className='hotspot-wrapper'; w.setAttribute('tabindex', '-1');
-            const d=document.createElement('button'); d.className='hotspot-dot'; d.setAttribute('aria-label', a.t + ' information');
-            const c=document.createElement('div'); c.className='hotspot-card'; c.innerHTML=`<div class="hotspot-title">${a.t}</div><div class="hotspot-desc">${a.d}</div>`;
-            w.appendChild(d); w.appendChild(c); aLayer.appendChild(w); const l=document.createElement('div'); l.className='annotation-line'; aLayer.appendChild(l);
-            aDoms.push({...a, w, l});
+            const anchorObj = new THREE.Object3D();
+            anchorObj.position.set(...a.anchor);
+            a.g.add(anchorObj);
+
+            const labelObj = new THREE.Object3D();
+            labelObj.position.set(a.anchor[0] + a.offset[0], a.anchor[1] + a.offset[1], a.anchor[2] + a.offset[2]);
+            a.g.add(labelObj);
+
+            const marker = document.createElement('button');
+            marker.type = 'button';
+            marker.className = 'hotspot-marker';
+            marker.setAttribute('aria-label', `${a.title} details`);
+
+            const label = document.createElement('div');
+            label.className = 'hotspot-label label-right';
+
+            const pill = document.createElement('button');
+            pill.type = 'button';
+            pill.className = 'hotspot-pill';
+            pill.textContent = a.short;
+
+            const panel = document.createElement('div');
+            panel.className = 'hotspot-panel';
+            panel.innerHTML = `<div class="hotspot-title">${a.title}</div><div class="hotspot-meta">${a.meta}</div><div class="hotspot-desc">${a.d}</div>`;
+
+            label.appendChild(pill);
+            label.appendChild(panel);
+
+            const line = document.createElement('div');
+            line.className = 'annotation-line';
+
+            aLayer.appendChild(line);
+            aLayer.appendChild(marker);
+            aLayer.appendChild(label);
+
+            bindAnnotationEvents(marker, a.id);
+            bindAnnotationEvents(pill, a.id);
+            bindAnnotationEvents(label, a.id);
+
+            const annotation = {
+                ...a,
+                anchorObj,
+                labelObj,
+                marker,
+                label,
+                pill,
+                panel,
+                line,
+                anchorWorld: new THREE.Vector3(),
+                labelWorld: new THREE.Vector3(),
+                anchorNdc: new THREE.Vector3(),
+                labelNdc: new THREE.Vector3()
+            };
+            aDoms.push(annotation);
+            aMap.set(a.id, annotation);
+            hideAnnotation(annotation);
         });
 
         function syncUI() {
+            annotationProj.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+            annotationFrustum.setFromProjectionMatrix(annotationProj);
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const visible = [];
+            const activeId = activeAnnotationId();
+
             aDoms.forEach(a => {
-                const p = new THREE.Vector3(...a.v).applyMatrix4(a.g.matrixWorld);
-                if (p.project(camera).z > 1 || p.z < -1) { a.w.style.display='none'; a.l.style.display='none'; return; } 
-                a.w.style.display='flex'; a.l.style.display='block';
-                const x=(p.x*0.5+0.5)*window.innerWidth, y=(p.y*-0.5+0.5)*window.innerHeight;
-                a.w.style.left=`${x+30}px`; a.w.style.top=`${y-30}px`;
-                const dx=(x+30)-x, dy=(y-30)-y; a.l.style.width=`${Math.sqrt(dx*dx+dy*dy)}px`; a.l.style.left=`${x}px`; a.l.style.top=`${y}px`;
-                a.l.style.transform=`rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`;
+                a.anchorObj.getWorldPosition(a.anchorWorld);
+                a.labelObj.getWorldPosition(a.labelWorld);
+                a.anchorNdc.copy(a.anchorWorld).project(camera);
+                a.labelNdc.copy(a.labelWorld).project(camera);
+
+                const isVisible =
+                    annotationFrustum.containsPoint(a.anchorWorld) &&
+                    annotationFrustum.containsPoint(a.labelWorld) &&
+                    a.anchorNdc.z >= -1 && a.anchorNdc.z <= 1 &&
+                    a.labelNdc.z >= -1 && a.labelNdc.z <= 1;
+
+                if (!isVisible) {
+                    hideAnnotation(a);
+                    return;
+                }
+
+                const anchorX = (a.anchorNdc.x * 0.5 + 0.5) * viewportWidth;
+                const anchorY = (a.anchorNdc.y * -0.5 + 0.5) * viewportHeight;
+                const labelX = (a.labelNdc.x * 0.5 + 0.5) * viewportWidth;
+                const labelY = (a.labelNdc.y * -0.5 + 0.5) * viewportHeight;
+                const width = a.label.offsetWidth || (a.id === activeId ? 246 : 112);
+                const height = a.label.offsetHeight || (a.id === activeId ? 118 : 34);
+                const side = labelX >= anchorX ? 'right' : 'left';
+
+                visible.push({ a, anchorX, anchorY, labelX, labelY, width, height, side, finalX: labelX, finalY: labelY });
+            });
+
+            resolveAnnotationCollisions(visible, viewportWidth, viewportHeight);
+
+            visible.forEach(item => {
+                item.a.marker.classList.remove('hotspot-hidden');
+                item.a.label.classList.remove('hotspot-hidden');
+                item.a.line.classList.remove('hotspot-hidden');
+                item.a.label.classList.toggle('label-right', item.side === 'right');
+                item.a.label.classList.toggle('label-left', item.side === 'left');
+                item.a.marker.style.left = `${item.anchorX}px`;
+                item.a.marker.style.top = `${item.anchorY}px`;
+                item.a.label.style.left = `${item.finalX}px`;
+                item.a.label.style.top = `${item.finalY}px`;
+
+                const lineEndX = item.finalX + (item.side === 'right' ? (-item.width / 2 + 12) : (item.width / 2 - 12));
+                const lineEndY = item.finalY - item.height / 2 + 18;
+                const dx = lineEndX - item.anchorX;
+                const dy = lineEndY - item.anchorY;
+                item.a.line.style.width = `${Math.max(8, Math.hypot(dx, dy))}px`;
+                item.a.line.style.left = `${item.anchorX}px`;
+                item.a.line.style.top = `${item.anchorY}px`;
+                item.a.line.style.opacity = item.a.id === activeId ? '1' : '0.78';
+                item.a.line.style.transform = `rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)`;
             });
         }
+
+        syncAnnotationActivity();
 
         window.addEventListener('resize', () => { camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); povCam.aspect=povWR.clientWidth/povWR.clientHeight; povCam.updateProjectionMatrix(); povRend.setSize(povWR.clientWidth,povWR.clientHeight); });
 
